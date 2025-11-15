@@ -96,7 +96,7 @@ async function generatePlayerPDF(s) {
     const tw = fontBold.widthOfTextAtSize(title, size);
     const x = (pageWidth - tw) / 2;
     drawLineOfText(title, { x, size, bold: true });
-    moveDown(0.5, 18);
+    moveDown(1.5, 18);
   }
 
   // -----------------------------
@@ -364,7 +364,7 @@ async function generatePlayerPDF(s) {
     lineHeight: 12,
   });
 
-  moveDown(2.5, 14);
+  moveDown(3.5, 14);
 
   // -----------------------------
   // Unterschriftenlinien
