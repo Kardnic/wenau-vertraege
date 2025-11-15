@@ -299,8 +299,64 @@ document.getElementById("importFile").addEventListener("change", async (event) =
 
   reader.readAsArrayBuffer(file);
 });
+// --------------------------------------
+// PDF GENERATOR
+// --------------------------------------
+
+async function generatePlayerPDF(s) {
+  const { PDFDocument, StandardFonts } = PDFLib;
+
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const { width, height } = page.getSize();
+  let y = height - 50;
+
+  function text(txt, size = 12, bold = false, offsetY = 20) {
+    y -= offsetY;
+    page.drawText(txt, {
+      x: 50,
+      y,
+      size,
+      font: bold ? fontBold : font,
+    });
+  }
+
+  text("Spielervertrag", 24, true, 40);
+
+  text("Spieler:", 12, true, 25);
+  text(s.name, 16, true);
+
+  const rows = [
+    ["Fahrtgeld:", s.fahrtgeld.toFixed(2)],
+    ["Trainingsprämie:", s.trainingspraemie.toFixed(2)],
+    ["Spielprämie:", s.spielpraemie.toFixed(2)],
+    ["Siegprämie:", s.siegpraemie.toFixed(2)],
+    ["Monatsgehalt:", s.gehalt_monat.toFixed(2)],
+    ["Jahresgehalt:", s.gehalt_jahr.toFixed(2)],
+  ];
+
+  rows.forEach(row => text(`${row[0]} ${row[1]} €`));
+
+  const today = new Date().toLocaleDateString("de-DE");
+  text(`Wenau, den ${today}`, 12, false, 40);
+
+  const pdfBytes = await pdfDoc.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${s.name}_Vertrag.pdf`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
 
 
 // ------- Start -------
 
 ladeSpieler();
+
