@@ -96,7 +96,7 @@ async function generatePlayerPDF(s) {
     const tw = fontBold.widthOfTextAtSize(title, size);
     const x = (pageWidth - tw) / 2;
     drawLineOfText(title, { x, size, bold: true });
-    moveDown(1.5, 18);
+    moveDown(3.5, 18);
   }
 
   // -----------------------------
@@ -122,7 +122,7 @@ async function generatePlayerPDF(s) {
     lineHeight: 12,
   });
 
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
   drawParagraph("und dem Spieler", {
     size: 10,
     bold: false,
@@ -137,7 +137,7 @@ async function generatePlayerPDF(s) {
     lineHeight: 12,
   });
 
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
   drawParagraph(
     `wird vereinbart, dass er in der ${FESTE_SAISON} als aktiver Spieler des Jugendsport Wenau e.V. der 1. Mannschaft tätig sein wird.`,
     {
@@ -157,7 +157,7 @@ async function generatePlayerPDF(s) {
     bold: true,
     lineHeight: 12,
   });
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // -----------------------------
   // Tabelle (Fahrtgeld, Prämien, Gehalt)
@@ -252,7 +252,7 @@ async function generatePlayerPDF(s) {
     }
   );
 
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // -----------------------------
   // Weitere Abschnitte (wie Original)
@@ -272,7 +272,7 @@ async function generatePlayerPDF(s) {
       lineHeight: 12,
     }
   );
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Trainingsprämie
   drawParagraph("Trainingsprämie", {
@@ -288,7 +288,7 @@ async function generatePlayerPDF(s) {
       lineHeight: 12,
     }
   );
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Spielprämie
   drawParagraph("Spielprämie", {
@@ -301,7 +301,7 @@ async function generatePlayerPDF(s) {
     bold: false,
     lineHeight: 12,
   });
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Technischer Ablauf
   drawParagraph("Technischer Ablauf für die Zahlungen", {
@@ -317,7 +317,7 @@ async function generatePlayerPDF(s) {
       lineHeight: 12,
     }
   );
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Besondere Vereinbarungen
   drawParagraph("Besondere Vereinbarungen", {
@@ -337,7 +337,7 @@ async function generatePlayerPDF(s) {
     "Diese Vereinbarung ist für die kommende Saison gültig. Es kann sein, dass eine redaktionelle Überarbeitung wegen zu erwartender Auswirkungen durch die Berufsgenossenschaft notwendig ist.",
     { size: 10, bold: false, lineHeight: 12 }
   );
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Aussetzung Spielbetrieb
   drawParagraph("Aussetzung des Spielbetriebs durch eine Anordnung", {
@@ -354,7 +354,7 @@ async function generatePlayerPDF(s) {
     { size: 10, bold: false, lineHeight: 12 }
   );
 
-  moveDown(0.5, 12);
+  moveDown(1.5, 12);
 
   // Datum
   const heute = new Date().toLocaleDateString("de-DE");
