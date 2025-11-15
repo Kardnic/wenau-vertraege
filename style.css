@@ -24,9 +24,9 @@ header {
   width: 90%;
   max-width: 1200px;
   margin: 25px auto;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 25px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 
 /* Karten / Panels */
@@ -235,3 +235,4 @@ tbody tr:hover {
   margin-right: 10px;
   transition: 0.2s;
 }
+
