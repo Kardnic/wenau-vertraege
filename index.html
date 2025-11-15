@@ -18,7 +18,7 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- iOS Add-to-Homescreen -->
+  <!-- Mobile -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -103,10 +103,13 @@
     </div>
   </div>
 
-  <!-- HAUPT-APP -->
+  <!-- PDF Generator MUSS VOR app.js geladen werden -->
+  <script src="pdf.js"></script>
+
+  <!-- Haupt-App -->
   <script src="app.js"></script>
 
-  <!-- Service Worker Registrierung -->
+  <!-- Service Worker Registrierung (nur unter HTTPS aktiv) -->
   <script>
     if ("serviceWorker" in navigator && location.protocol === "https:") {
       navigator.serviceWorker.register("service-worker.js")
