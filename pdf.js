@@ -171,7 +171,7 @@ async function generatePlayerPDF(s) {
     ["Fahrtgeld (€)", Number(s.fahrtgeld || 0).toFixed(2)],
     ["Trainingsprämie (€)", Number(s.trainingspraemie || 0).toFixed(2)],
     ["Spielprämie (€)", Number(s.spielpraemie || 0).toFixed(2)],
-    ["Siegprämie pro Spiel (!)", Number(s.siegpraemie || 0).toFixed(2)],
+    ["Siegprämie pro Spiel (€)", Number(s.siegpraemie || 0).toFixed(2)],
     ["Gehalt/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
     ["Gehalt/Jahr (€)", Number(s.gehalt_jahr || 0).toFixed(2)],
   ];
@@ -418,3 +418,4 @@ async function generatePlayerPDF(s) {
 
 // global verfügbar für app.js
 window.generatePlayerPDF = generatePlayerPDF;
+
