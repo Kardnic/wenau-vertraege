@@ -1,0 +1,227 @@
+/* Grundlayout */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  background: #f2f2f2;
+  color: #222;
+}
+
+/* Kopfzeile */
+header {
+  background: #1a1a1a; /* tiefschwarz */
+  color: #ffffff;
+  padding: 20px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Layout */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 25px auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 25px;
+}
+
+/* Karten / Panels */
+.card {
+  background: white;
+  padding: 20px 25px;
+  border-radius: 10px;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+}
+
+/* Titel */
+.card h2 {
+  margin-top: 0;
+  color: #c40000; /* Vereinsrot */
+}
+
+/* Inputs */
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 15px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #c40000;
+  box-shadow: 0 0 5px #c40000aa;
+}
+
+/* Buttons */
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  margin-right: 10px;
+  transition: 0.2s;
+}
+
+/* Speichern */
+button[type="submit"] {
+  background: #c40000;
+  color: white;
+}
+button[type="submit"]:hover {
+  background: #a30000;
+}
+
+/* Action Buttons: Import / Export */
+.action-btn {
+  background: #1a1a1a;
+  color: white;
+}
+.action-btn:hover {
+  background: #333333;
+}
+
+/* Tabelle */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 3px 7px rgba(0,0,0,0.15);
+}
+
+thead {
+  background: #c40000;
+  color: white;
+}
+
+thead th {
+  padding: 12px;
+  font-size: 15px;
+}
+
+tbody td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Zebra */
+tbody tr:nth-child(even) {
+  background: #f8f8f8;
+}
+
+tbody tr:hover {
+  background: #ffe5e5; /* leichtes Rot */
+}
+
+/* Edit Button */
+.editBtn {
+  background: #ffcc00;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.editBtn:hover {
+  background: #e6b800;
+}
+
+/* Delete Button */
+.deleteBtn {
+  background: #c40000;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+.deleteBtn:hover {
+  background: #a30000;
+}
+
+/* Statusfeld */
+#status {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: inline-block;
+}
+/* Responsive Design */
+@media (max-width: 1100px) {
+  .container {
+    grid-template-columns: 1fr;   /* nur 1 Spalte */
+  }
+
+  .card {
+    margin-bottom: 20px;
+  }
+}
+
+/* Noch schmalere Fenster */
+@media (max-width: 600px) {
+
+  header {
+    font-size: 22px;
+    padding: 15px;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  table th, table td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+}
+/* Accordion Header */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+/* Pfeil */
+.accordion-header .arrow {
+  font-size: 20px;
+  color: #c40000;
+  transition: 0.3s;
+}
+
+/* Inhalt verborgen */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+}
+
+/* Inhalt sichtbar */
+.accordion-content.open {
+  max-height: 1200px; /* groß genug für alle Felder */
+  opacity: 1;
+  margin-top: 15px;
+}
+
+/* Pfeil drehen */
+.accordion-header.open .arrow {
+  transform: rotate(180deg);
+}

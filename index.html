@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Programm Wenau Verträge (Web)</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Excel Bibliothek -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- PDF-LIB (global verfügbar als window.PDFLib) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- iOS Add-to-Homescreen -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+
+</head>
+<body>
+
+  <header>
+    Jugendsport Wenau – Vertragsverwaltung (Web)
+  </header>
+
+  <div class="container">
+    
+    <!-- Linke Seite – Spielerformular -->
+    <div class="card">
+      <div class="accordion-header" id="formToggle">
+        <h2>Spieler hinzufügen / bearbeiten</h2>
+        <span class="arrow">▼</span>
+      </div>
+
+      <div id="formContainer" class="accordion-content">
+        <form id="spielerForm">
+          <label>Name:</label>
+          <input type="text" id="name" required>
+
+          <label>Fahrtgeld:</label>
+          <input type="number" id="fahrtgeld" step="0.01">
+
+          <label>Trainingsprämie:</label>
+          <input type="number" id="trainingspraemie" step="0.01">
+
+          <label>Spielprämie:</label>
+          <input type="number" id="spielpraemie" step="0.01">
+
+          <label>Siegprämie:</label>
+          <input type="number" id="siegpraemie" step="0.01">
+
+          <label>Gehalt / Monat:</label>
+          <input type="number" id="gehalt_monat" step="0.01" readonly>
+
+          <label>Gehalt / Jahr:</label>
+          <input type="number" id="gehalt_jahr" step="0.01" readonly>
+
+          <button type="submit">Speichern</button>
+          <p id="status"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Rechte Seite – Tabelle -->
+    <div class="card">
+      <h2>Spielerliste</h2>
+
+      <table id="spielerliste">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Fahrtgeld</th>
+            <th>Trainingsprämie</th>
+            <th>Spielprämie</th>
+            <th>Siegprämie</th>
+            <th>Monat</th>
+            <th>Jahr</th>
+            <th>Bearbeiten</th>
+            <th>Löschen</th>
+            <th>Vertrag</th>
+          </tr>
+        </thead>
+        <tbody id="spielerBody"></tbody>
+      </table>
+
+      <br>
+
+      <button id="exportBtn" class="action-btn">Excel exportieren</button>
+
+      <label class="action-btn" style="display:inline-block; cursor:pointer;">
+        Excel importieren
+        <input type="file" id="importFile" accept=".xlsx" style="display:none;">
+      </label>
+
+    </div>
+  </div>
+
+  <!-- HAUPT-APP -->
+  <script src="app.js"></script>
+
+  <!-- Service Worker Registrierung -->
+  <script>
+    if ("serviceWorker" in navigator && location.protocol === "https:") {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("SW registriert"))
+        .catch(err => console.error("SW Fehler:", err));
+    }
+  </script>
+
+</body>
+</html>
