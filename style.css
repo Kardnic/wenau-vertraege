@@ -22,12 +22,13 @@ header {
 /* Layout */
 .container {
   width: 90%;
-  max-width: 1200px;
+  max-width: 900px;
   margin: 25px auto;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 25px;
 }
+
 
 /* Karten / Panels */
 .card {
@@ -235,4 +236,5 @@ tbody tr:hover {
   margin-right: 10px;
   transition: 0.2s;
 }
+
 
