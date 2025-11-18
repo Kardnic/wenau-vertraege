@@ -140,7 +140,7 @@ async function generatePlayerPDF(s) {
 
   moveDown(0.8, 12);
   drawParagraph(
-    `wird vereinbart, dass er in der `,{size: 10,
+    `wird vereinbart, dass er in der Saison`,{size: 10,
       bold: false,
       lineHeight: 12,});
   drawParagraph(s.saison, { size: 10, bold: true, lineHeight: 12 });
