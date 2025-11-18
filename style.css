@@ -217,7 +217,7 @@ tbody tr:hover {
 
 /* Inhalt sichtbar */
 .accordion-content.open {
-  max-height: none; /* groß genug für alle Felder */
+  max-height: 9999px; /* groß genug für alle Felder */
   opacity: 1;
   margin-top: 15px;
 }
