@@ -311,39 +311,71 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
 
 // ------- Excel Import -------
 
-document
-  .getElementById("importFile")
-  .addEventListener("change", async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+document.getElementById("exportBtn").addEventListener("click", async () => {
+  const data = await getAllPlayers();
 
+  if (!data.length) {
+    alert("Keine Spieler vorhanden!");
+    return;
+  }
+
+  // XLSX erzeugen
+  const ws = XLSX.utils.json_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Spieler");
+
+  const xlsxBinary = XLSX.write(wb, {
+    bookType: "xlsx",
+    type: "binary"
+  });
+
+  // Uint8Array erzeugen
+  function s2ab(s) {
+    const buf = new ArrayBuffer(s.length);
+    const view = new Uint8Array(buf);
+    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+
+  const xlsxArray = s2ab(xlsxBinary);
+
+  // Passwort abfragen
+  const pass = "WenauerJungs1957";
+
+  if (!pass) {
+    alert("Export abgebrochen – kein Passwort eingegeben.");
+    return;
+  }
+
+  // ZIP erzeugen
+  const zip = new JSZip();
+  zip.file("Spielerverwaltung.xlsx", xlsxArray);
+
+  // ZIP als Blob erstellen
+  zip.generateAsync({ type: "blob" }).then((zipBlob) => {
+
+    // ZIP verschlüsseln mit AES
     const reader = new FileReader();
+    reader.onload = function () {
+      const wordArray = CryptoJS.lib.WordArray.create(reader.result);
+      const encrypted = CryptoJS.AES.encrypt(wordArray, pass).toString();
 
-    reader.onload = async (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
+      // Verschlüsselten Inhalt speichern
+      const encryptedBlob = new Blob([encrypted], { type: "text/plain" });
 
-      const sheetName = workbook.SheetNames[0];
-      const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-
-      // Alte DB löschen
-      const db = await openDB();
-      const tx = db.transaction(STORE_NAME, "readwrite");
-      tx.objectStore(STORE_NAME).clear();
-
-      // Neue Spieler speichern
-      for (const r of rows) {
-        delete r.id; // neue ID vergeben
-        await addPlayerToDB(r);
-      }
-
-      document.getElementById("status").innerText =
-        "📄 Excel erfolgreich importiert!";
-      ladeSpieler();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(encryptedBlob);
+      a.download = "Spielerverwaltung_geschuetzt.zip.enc";
+      a.click();
     };
 
-    reader.readAsArrayBuffer(file);
+    reader.readAsArrayBuffer(zipBlob);
   });
+
+  document.getElementById("status").innerText =
+    "🔐 ZIP erfolgreich mit Passwort geschützt!";
+});
+
 
 // --------------------------------------
 // PDF GENERATOR (einfach, mit Saisontext)
