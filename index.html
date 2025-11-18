@@ -85,40 +85,46 @@
 
     <!-- TABELLE -->
     <div class="card">
-      
-      <h2>Spielerliste</h2>
-      <div class="accordion-header" id="listToggle"></div>
-      <table id="spielerliste">
-  <thead>
-  <tr>
-    <th class="sortable" data-key="name">Name <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="fahrtgeld">Fahrtgeld <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="trainingspraemie">Trainingsprämie <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="spielpraemie">Spielprämie <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="siegpraemie">Siegprämie <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="gehalt_monat">Monat <span class="sort-icon"></span></th>
-    <th class="sortable" data-key="gehalt_jahr">Jahr <span class="sort-icon"></span></th>
 
-    <th>Bearbeiten</th>
-    <th>Löschen</th>
-    <th>Vertrag</th>
-  </tr>
-</thead>
+  <div class="accordion-header" id="listToggle">
+    <h2>Spielerliste</h2>
+    <span class="arrow">▼</span>
+  </div>
 
-  <tbody id="spielerBody"></tbody>
-</table>
+  <div id="listContainer" class="accordion-content">
 
-      <br>
+    <table id="spielerliste">
+      <thead>
+      <tr>
+        <th class="sortable" data-key="name">Name <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="fahrtgeld">Fahrtgeld <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="trainingspraemie">Trainingsprämie <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="spielpraemie">Spielprämie <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="siegpraemie">Siegprämie <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="gehalt_monat">Monat <span class="sort-icon"></span></th>
+        <th class="sortable" data-key="gehalt_jahr">Jahr <span class="sort-icon"></span></th>
 
-      <button id="exportBtn" class="action-btn">Excel exportieren</button>
+        <th>Bearbeiten</th>
+        <th>Löschen</th>
+        <th>Vertrag</th>
+      </tr>
+      </thead>
 
-      <label class="action-btn" style="display:inline-block; cursor:pointer;">
-        Excel importieren
-        <input type="file" id="importFile" accept=".xlsx" style="display:none;">
-      </label>
+      <tbody id="spielerBody"></tbody>
+    </table>
 
-    </div>
-    </div>
+    <br>
+
+    <button id="exportBtn" class="action-btn">Excel exportieren</button>
+
+    <label class="action-btn" style="display:inline-block; cursor:pointer;">
+      Excel importieren
+      <input type="file" id="importFile" accept=".xlsx" style="display:none;">
+    </label>
+
+  </div>
+</div>
+
   </div>
 
   <!-- PDF Generator -->

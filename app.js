@@ -112,6 +112,7 @@ const jahrInput = document.getElementById("gehalt_jahr");
 const formToggle = document.getElementById("formToggle");
 const listToggle = document.getElementById("listToggle");
 const formContainer = document.getElementById("formContainer");
+const listContainer = document.getElementById("listContainer");
 
 let spielerData = [];
 window.currentEditId = null;
@@ -272,7 +273,7 @@ formToggle.addEventListener("click", () => {
   formToggle.classList.toggle("open");
 });
 listToggle.addEventListener("click", () => {
-  formContainer.classList.toggle("open");
+  listContainer.classList.toggle("open");
   listToggle.classList.toggle("open");
 });
 // -----------------------------------------------------
@@ -325,6 +326,7 @@ async function ladeSpieler() {
 
       formContainer.classList.add("open");
       formToggle.classList.add("open");
+      listContainer.classList.add("open");
       listToggle.classList.add("open");
 
       document.getElementById("name").value = s.name;
@@ -393,6 +395,7 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
   }
 
   formContainer.classList.remove("open");
+  listContainer.classList.remove("open");
   formToggle.classList.remove("open");
   listToggle.classList.remove("open");
 
