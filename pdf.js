@@ -4,8 +4,8 @@
 async function generatePlayerPDF(s) {
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
 
+  // richtige Saison dynamisch aus dem Spieler
   const FESTE_SAISON = `Saison ${s.saison}`;
-
 
   // A4-Seite: 595 x 842 (ca.)
   const pdfDoc = await PDFDocument.create();
@@ -101,61 +101,36 @@ async function generatePlayerPDF(s) {
   }
 
   // -----------------------------
-  // Einleitung wie im Original
+  // Einleitung
   // -----------------------------
 
-  // "Zwischen dem Verein ..."
-  drawParagraph("Zwischen dem Verein", {
-    size: 10,
-    bold: false,
-    lineHeight: 12,
-  });
-
+  drawParagraph("Zwischen dem Verein", { size: 10, lineHeight: 12 });
   moveDown(0.3, 10);
-  drawParagraph("Jugendsport Wenau e.V.", {
-    size: 10,
-    bold: true,
-    lineHeight: 12,
-  });
-  drawParagraph('(im Folgenden „Verein“ genannt)', {
-    size: 10,
-    bold: false,
-    lineHeight: 12,
-  });
+
+  drawParagraph("Jugendsport Wenau e.V.", { size: 10, bold: true, lineHeight: 12 });
+  drawParagraph('(im Folgenden „Verein“ genannt)', { size: 10, lineHeight: 12 });
 
   moveDown(0.8, 12);
-  drawParagraph("und dem Spieler", {
-    size: 10,
-    bold: false,
-    lineHeight: 12,
-  });
 
+  drawParagraph("und dem Spieler", { size: 10, lineHeight: 12 });
   moveDown(0.3, 10);
+
   drawParagraph(s.name, { size: 10, bold: true, lineHeight: 12 });
-  drawParagraph('(im Folgenden „Spieler“ genannt)', {
-    size: 10,
-    bold: false,
-    lineHeight: 12,
-  });
+  drawParagraph('(im Folgenden „Spieler“ genannt)', { size: 10, lineHeight: 12 });
 
   moveDown(0.8, 12);
-  drawParagraph(
-    `wird vereinbart, dass er in der Saison`,{size: 10,
-      bold: false,
-      lineHeight: 12,});
+
+  drawParagraph("wird vereinbart, dass er in der ", { size: 10, lineHeight: 12 });
   drawParagraph(s.saison, { size: 10, bold: true, lineHeight: 12 });
-  drawParagraph(` als aktiver Spieler des Jugendsport Wenau e.V. der 1. Mannschaft tätig sein wird.`,
-    {
-      size: 10,
-      bold: false,
-      lineHeight: 12,
-    }
+  drawParagraph(
+    " als aktiver Spieler des Jugendsport Wenau e.V. der 1. Mannschaft tätig sein wird.",
+    { size: 10, lineHeight: 12 }
   );
 
   moveDown(0.8, 14);
 
   // -----------------------------
-  // Prämiensystem Überschrift
+  // Prämiensystem
   // -----------------------------
   drawParagraph(`Prämiensystem: ${FESTE_SAISON}`, {
     size: 10,
@@ -165,7 +140,7 @@ async function generatePlayerPDF(s) {
   moveDown(0.8, 12);
 
   // -----------------------------
-  // Tabelle (Fahrtgeld, Prämien, Gehalt)
+  // Tabelle
   // -----------------------------
   const tableTop = y;
   const col1Width = 250;
@@ -184,10 +159,8 @@ async function generatePlayerPDF(s) {
   const tableLeft = marginLeft;
   const tableRight = marginLeft + col1Width + col2Width;
 
-  // Linienbreite
   const lineThickness = 0.6;
 
-  // horizontale Linien
   for (let i = 0; i <= rows.length; i++) {
     const yy = tableTop - i * rowHeight;
     page.drawLine({
@@ -198,7 +171,6 @@ async function generatePlayerPDF(s) {
     });
   }
 
-  // vertikale Linien
   page.drawLine({
     start: { x: tableLeft, y: tableTop },
     end: { x: tableLeft, y: tableTop - rows.length * rowHeight },
@@ -218,23 +190,15 @@ async function generatePlayerPDF(s) {
     color: rgb(0, 0, 0),
   });
 
-  // Tabelleninhalt
   let rowY = tableTop - rowHeight + 4;
-  rows.forEach(([label, value]) => {
-    // linke Spalte
-    page.drawText(label, {
-      x: tableLeft + 4,
-      y: rowY,
-      size: 9,
-      font,
-    });
 
-    // rechte Spalte rechtsbündig
-    const vText = value;
-    const vWidth = fontBold.widthOfTextAtSize(vText, 9);
+  rows.forEach(([label, value]) => {
+    page.drawText(label, { x: tableLeft + 4, y: rowY, size: 9, font });
+
+    const vWidth = fontBold.widthOfTextAtSize(value, 9);
     const vx = tableRight - 4 - vWidth;
 
-    page.drawText(vText, {
+    page.drawText(value, {
       x: vx,
       y: rowY,
       size: 9,
@@ -244,71 +208,40 @@ async function generatePlayerPDF(s) {
     rowY -= rowHeight;
   });
 
-  // Unter die Tabelle springen
   y = tableTop - rows.length * rowHeight - 12;
 
-  // Fußnote unter der Tabelle
+  // Fußnote
   drawParagraph(
     "Als Ersatz für besondere Aufwendungen erhalten Torhüter einen Gutschein über 100,- €, falls sie am 01.02. noch im Aufgebot der Mannschaft stehen.",
-    {
-      size: 8,
-      bold: false,
-      lineHeight: 10,
-    }
+    { size: 8, lineHeight: 10 }
   );
 
   moveDown(0.8, 12);
 
   // -----------------------------
-  // Weitere Abschnitte (wie Original)
+  // Weitere Abschnitte
   // -----------------------------
-
-  // Gehaltsschlüssel
-  drawParagraph("Gehaltsschlüssel", {
-    size: 11,
-    bold: true,
-    lineHeight: 14,
-  });
+  drawParagraph("Gehaltsschlüssel", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph(
     "Für das Gehalt pro Monat wird von 8 Trainingseinheiten und 4 Spielen im Monat ausgegangen.",
-    {
-      size: 10,
-      bold: false,
-      lineHeight: 12,
-    }
+    { size: 10, lineHeight: 12 }
   );
   moveDown(0.8, 12);
 
-  // Trainingsprämie
-  drawParagraph("Trainingsprämie", {
-    size: 11,
-    bold: true,
-    lineHeight: 14,
-  });
+  drawParagraph("Trainingsprämie", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph(
     "Absagen jeglicher Art zu Trainingseinheiten führen zum Verlust der jeweiligen Trainingsprämie.",
-    {
-      size: 10,
-      bold: false,
-      lineHeight: 12,
-    }
+    { size: 10, lineHeight: 12 }
   );
   moveDown(0.8, 12);
 
-  // Spielprämie
-  drawParagraph("Spielprämie", {
-    size: 11,
-    bold: true,
-    lineHeight: 14,
-  });
+  drawParagraph("Spielprämie", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph("Spielprämien werden ab 1 Minute Spielzeit berechnet.", {
     size: 10,
-    bold: false,
     lineHeight: 12,
   });
   moveDown(0.8, 12);
 
-  // Technischer Ablauf
   drawParagraph("Technischer Ablauf für die Zahlungen", {
     size: 11,
     bold: true,
@@ -316,15 +249,10 @@ async function generatePlayerPDF(s) {
   });
   drawParagraph(
     "Die Zusammenstellung der aufwandsbezogenen Zahlungen für den Steuerberater findet monatlich statt. Die Prämien werden am Monatsende überwiesen.",
-    {
-      size: 10,
-      bold: false,
-      lineHeight: 12,
-    }
+    { size: 10, lineHeight: 12 }
   );
   moveDown(0.8, 12);
 
-  // Besondere Vereinbarungen
   drawParagraph("Besondere Vereinbarungen", {
     size: 11,
     bold: true,
@@ -332,19 +260,18 @@ async function generatePlayerPDF(s) {
   });
   drawParagraph(
     "Sollte es zu einer Kündigung durch den Spieler (Abmeldung vor dem 31.05.2027) kommen, wird eine Entschädigungszahlung an den Verein in Höhe der dreifachen Monats-Pauschale fällig.",
-    { size: 10, bold: false, lineHeight: 12 }
+    { size: 10, lineHeight: 12 }
   );
   drawParagraph(
     "Sollte es zu einer Kündigung seitens des Vereins kommen, ist der Verein von sämtlichen ausstehenden Gehaltszahlungen entbunden.",
-    { size: 10, bold: false, lineHeight: 12 }
+    { size: 10, lineHeight: 12 }
   );
   drawParagraph(
     "Diese Vereinbarung ist für die kommende Saison gültig. Es kann sein, dass eine redaktionelle Überarbeitung wegen zu erwartender Auswirkungen durch die Berufsgenossenschaft notwendig ist.",
-    { size: 10, bold: false, lineHeight: 12 }
+    { size: 10, lineHeight: 12 }
   );
   moveDown(0.8, 12);
 
-  // Aussetzung Spielbetrieb
   drawParagraph("Aussetzung des Spielbetriebs durch eine Anordnung", {
     size: 11,
     bold: true,
@@ -352,22 +279,17 @@ async function generatePlayerPDF(s) {
   });
   drawParagraph(
     "Sollte es durch besondere Gründe zu einer Aussetzung des Spielbetriebs kommen (z.B. Pandemie), wird der Verein für diesen Zeitraum keine Aufwandsentschädigungen zahlen.",
-    { size: 10, bold: false, lineHeight: 12 }
+    { size: 10, lineHeight: 12 }
   );
   drawParagraph(
     "Eine besondere finanzielle Entwicklung auf Vereinsebene berechtigt beide Seiten zur außerordentlichen Kündigung.",
-    { size: 10, bold: false, lineHeight: 12 }
+    { size: 10, lineHeight: 12 }
   );
 
   moveDown(0.8, 12);
 
-  // Datum
   const heute = new Date().toLocaleDateString("de-DE");
-  drawParagraph(`Wenau, den ${heute}`, {
-    size: 10,
-    bold: false,
-    lineHeight: 12,
-  });
+  drawParagraph(`Wenau, den ${heute}`, { size: 10, lineHeight: 12 });
 
   moveDown(3.5, 14);
 
@@ -377,7 +299,6 @@ async function generatePlayerPDF(s) {
   const sigWidth = 180;
   const sigY = y;
 
-  // Spieler
   page.drawLine({
     start: { x: marginLeft, y: sigY },
     end: { x: marginLeft + sigWidth, y: sigY },
@@ -391,7 +312,6 @@ async function generatePlayerPDF(s) {
     font,
   });
 
-  // Verein
   const rightStartX = pageWidth - marginRight - sigWidth;
   page.drawLine({
     start: { x: rightStartX, y: sigY },
@@ -423,4 +343,3 @@ async function generatePlayerPDF(s) {
 
 // global verfügbar für app.js
 window.generatePlayerPDF = generatePlayerPDF;
-
