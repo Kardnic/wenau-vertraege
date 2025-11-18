@@ -110,6 +110,7 @@ const monatInput = document.getElementById("gehalt_monat");
 const jahrInput = document.getElementById("gehalt_jahr");
 
 const formToggle = document.getElementById("formToggle");
+const listToggle = document.getElementById("listToggle");
 const formContainer = document.getElementById("formContainer");
 
 let spielerData = [];
@@ -231,7 +232,10 @@ formToggle.addEventListener("click", () => {
   formContainer.classList.toggle("open");
   formToggle.classList.toggle("open");
 });
-
+listToggle.addEventListener("click", () => {
+  formContainer.classList.toggle("open");
+  listToggle.classList.toggle("open");
+});
 // -----------------------------------------------------
 //  Tabelle aktualisieren
 // -----------------------------------------------------
@@ -282,6 +286,7 @@ async function ladeSpieler() {
 
       formContainer.classList.add("open");
       formToggle.classList.add("open");
+      listToggle.classList.add("open");
 
       document.getElementById("name").value = s.name;
       document.getElementById("saison").value = s.saison;
@@ -350,6 +355,7 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
 
   formContainer.classList.remove("open");
   formToggle.classList.remove("open");
+  listToggle.classList.remove("open");
 
   document.getElementById("spielerForm").reset();
   monatInput.value = "";
