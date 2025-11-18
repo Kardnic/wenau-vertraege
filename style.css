@@ -236,5 +236,20 @@ tbody tr:hover {
   margin-right: 10px;
   transition: 0.2s;
 }
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.sort-icon {
+  font-size: 12px;
+  margin-left: 4px;
+  opacity: 0.4;
+}
+
+.sortable.active .sort-icon {
+  opacity: 1;
+}
 
 

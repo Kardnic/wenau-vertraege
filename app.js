@@ -194,6 +194,45 @@ function addListenersToButtons() {
     });
   });
 }
+function updateSortIcons() {
+  document.querySelectorAll("th.sortable").forEach(th => {
+    const key = th.getAttribute("data-key");
+    const icon = th.querySelector(".sort-icon");
+
+    if (key !== sortColumn) {
+      icon.textContent = "";
+      th.classList.remove("active");
+      return;
+    }
+
+    th.classList.add("active");
+    icon.textContent = sortDirection === 1 ? "▲" : "▼";
+  });
+}
+
+function sortTable(key) {
+  if (sortColumn === key) {
+    sortDirection *= -1;
+  } else {
+    sortColumn = key;
+    sortDirection = 1;
+  }
+
+  spielerData.sort((a, b) => {
+    const valA = a[key];
+    const valB = b[key];
+
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return (parseFloat(valA) - parseFloat(valB)) * sortDirection;
+    }
+
+    return valA.toString().localeCompare(valB.toString()) * sortDirection;
+  });
+
+  renderSortedTable();
+  updateSortIcons();
+}
+
 
 
 // -----------------------------------------------------
