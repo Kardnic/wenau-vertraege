@@ -297,7 +297,7 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
 
   // ZIP erstellen
   const writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
-    password: "wenau2024",      // <- Passwort
+    password: ZIP_PASSWORD,      // <- Passwort
     encryptionStrength: 1       // <- 1 = ZipCrypto (Windows kompatibel)
   });
 
