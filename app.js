@@ -234,6 +234,33 @@ function sortTable(key) {
   updateSortIcons();
 }
 
+function smoothToggle(content, header) {
+  if (content.classList.contains("open")) {
+    // ZU → Höhe von aktueller Höhe auf 0 animieren
+    content.style.maxHeight = content.scrollHeight + "px";
+    requestAnimationFrame(() => {
+      content.style.maxHeight = "0px";
+      content.classList.remove("open");
+      header.classList.remove("open");
+    });
+  } else {
+    // AUF → Höhe von 0 auf scrollHeight animieren
+    content.classList.add("open");
+    header.classList.add("open");
+    content.style.maxHeight = content.scrollHeight + "px";
+
+    // Nach Animation: Höhe auf „auto“ setzen (ohne Sprung)
+    content.addEventListener(
+      "transitionend",
+      () => {
+        if (content.classList.contains("open")) {
+          content.style.maxHeight = "none";
+        }
+      },
+      { once: true }
+    );
+  }
+}
 
 
 // -----------------------------------------------------
@@ -269,13 +296,13 @@ spielInput.addEventListener("input", berechneGehalt);
 // -----------------------------------------------------
 
 formToggle.addEventListener("click", () => {
-  formContainer.classList.toggle("open");
-  formToggle.classList.toggle("open");
+  smoothToggle(formContainer, formToggle);
 });
+
 listToggle.addEventListener("click", () => {
-  listContainer.classList.toggle("open");
-  listToggle.classList.toggle("open");
+  smoothToggle(listContainer, listToggle);
 });
+
 // -----------------------------------------------------
 //  Tabelle aktualisieren
 // -----------------------------------------------------
