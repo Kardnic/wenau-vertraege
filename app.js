@@ -351,10 +351,9 @@ async function ladeSpieler() {
 
       window.currentEditId = id;
 
-      formContainer.classList.add("open");
-      formToggle.classList.add("open");
-      listContainer.classList.add("open");
-      listToggle.classList.add("open");
+      smoothToggle(formContainer, formToggle);
+      smoothToggle(listContainer, listToggle);
+
 
       document.getElementById("name").value = s.name;
       document.getElementById("saison").value = s.saison;
