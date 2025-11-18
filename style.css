@@ -217,6 +217,7 @@ tbody tr:hover {
 
 .accordion-content.open {
   opacity: 1;
+  overflow: visible;
 }
 
 
