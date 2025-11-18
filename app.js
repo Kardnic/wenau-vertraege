@@ -4,7 +4,24 @@ const DB_NAME = "wenauVertraegeDB";
 const DB_VERSION = 1;
 const STORE_NAME = "spieler";
 
+const saisonFilter = document.getElementById("saisonFilter");
 
+function generateSaisonOptions(selectElement) {
+  const currentYear = new Date().getFullYear();
+  const start = currentYear - 1;
+  const end = currentYear + 5;
+
+  for (let y = start; y <= end; y++) {
+    const saison = `${y}/${y + 1}`;
+    const option = document.createElement("option");
+    option.value = saison;
+    option.textContent = saison;
+    selectElement.appendChild(option);
+  }
+}
+
+generateSaisonOptions(saisonFilter);
+generateSaisonOptions(document.getElementById("saison")); // Formular-Dropdown
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -93,11 +110,24 @@ function berechneGehalt() {
   const spiel = parseFloat(spielInput.value) || 0;
 
   const gehaltMonat = fahrtgeld + 8 * trainings + 4 * spiel;
-  const gehaltJahr = gehaltMonat * 10;
+
+  // Saison aus dem Formular
+  const saison = document.getElementById("saison").value;
+
+  let gehaltJahr;
+
+  // Spezialfall Saison 2025/2026
+  if (saison === "2025/2026") {
+    gehaltJahr = gehaltMonat * 5;
+  } else {
+    gehaltJahr = gehaltMonat * 10;
+  }
 
   monatInput.value = gehaltMonat.toFixed(2);
   jahrInput.value = gehaltJahr.toFixed(2);
 }
+
+
 
 fahrtgeldInput.addEventListener("input", berechneGehalt);
 trainingsInput.addEventListener("input", berechneGehalt);
@@ -112,7 +142,12 @@ formToggle.addEventListener("click", () => {
 // ------- Tabelle rendern -------
 
 async function ladeSpieler() {
-  spielerData = await getAllPlayers();
+  const allPlayers = await getAllPlayers();
+  const activeSaison = document.getElementById("saisonFilter").value;
+
+  // Spieler nach Saison filtern
+  spielerData = allPlayers.filter(p => p.saison === activeSaison);
+
   const tbody = document.getElementById("spielerBody");
   tbody.innerHTML = "";
 
@@ -120,7 +155,7 @@ async function ladeSpieler() {
     tbody.innerHTML = `
       <tr>
         <td colspan="10" style="text-align:center; padding:20px;">
-          Noch keine Spieler gespeichert.
+          Noch keine Spieler für Saison ${activeSaison} gespeichert.
         </td>
       </tr>`;
     return;
@@ -136,7 +171,6 @@ async function ladeSpieler() {
       <td>${Number(s.siegpraemie || 0).toFixed(2)}</td>
       <td>${Number(s.gehalt_monat || 0).toFixed(2)}</td>
       <td>${Number(s.gehalt_jahr || 0).toFixed(2)}</td>
-
       <td><button class="editBtn" data-id="${s.id}">✏️</button></td>
       <td><button class="deleteBtn" data-id="${s.id}">🗑️</button></td>
       <td><button class="contractBtn" data-id="${s.id}">📄</button></td>
@@ -144,9 +178,7 @@ async function ladeSpieler() {
     tbody.appendChild(tr);
   });
 
-
-
-  // Löschen
+  // DELETE
   document.querySelectorAll(".deleteBtn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const id = Number(btn.getAttribute("data-id"));
@@ -156,7 +188,7 @@ async function ladeSpieler() {
     });
   });
 
-  // Bearbeiten
+  // EDIT
   document.querySelectorAll(".editBtn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       formContainer.classList.add("open");
@@ -168,10 +200,10 @@ async function ladeSpieler() {
 
       document.getElementById("name").value = spieler.name;
       document.getElementById("fahrtgeld").value = spieler.fahrtgeld;
-      document.getElementById("trainingspraemie").value =
-        spieler.trainingspraemie;
+      document.getElementById("trainingspraemie").value = spieler.trainingspraemie;
       document.getElementById("spielpraemie").value = spieler.spielpraemie;
       document.getElementById("siegpraemie").value = spieler.siegpraemie;
+      document.getElementById("saison").value = spieler.saison;
 
       berechneGehalt();
 
@@ -180,17 +212,18 @@ async function ladeSpieler() {
     });
   });
 
-  // Vertrag (Platzhalter)
+  // CONTRACT
   document.querySelectorAll(".contractBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const id = Number(btn.getAttribute("data-id"));
       const s = spielerData.find((p) => p.id === id);
       if (!s) return;
       generatePlayerPDF(s);
-
     });
   });
 }
+
+
 
 // ------- Speichern Formular -------
 
@@ -202,6 +235,7 @@ document
     const data = {
       id: window.currentEditId || undefined,
       name: document.getElementById("name").value,
+      saison: document.getElementById("saison").value,
       fahrtgeld: parseFloat(fahrtgeldInput.value) || 0,
       trainingspraemie: parseFloat(trainingsInput.value) || 0,
       spielpraemie: parseFloat(spielInput.value) || 0,
