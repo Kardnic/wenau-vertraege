@@ -4,7 +4,7 @@ const DB_NAME = "wenauVertraegeDB";
 const DB_VERSION = 1;
 const STORE_NAME = "spieler";
 
-const saisonFilter = document.getElementById("saisonFilter");
+const saisonFilter = document.getElementById("saison");
 
 const ZIP_PASSWORD = "WenauerJungs1957!";   // Festes Passwort
 
@@ -23,7 +23,7 @@ function generateSaisonOptions(selectElement) {
   }
 }
 
-generateSaisonOptions(saisonFilter);
+
 generateSaisonOptions(document.getElementById("saison")); // Formular-Dropdown
 
 function openDB() {
@@ -146,7 +146,7 @@ formToggle.addEventListener("click", () => {
 
 async function ladeSpieler() {
   const allPlayers = await getAllPlayers();
-  const activeSaison = document.getElementById("saisonFilter").value;
+  const activeSaison = document.getElementById("saison").value;
 
   // Spieler nach Saison filtern
   spielerData = allPlayers.filter(p => p.saison === activeSaison);
