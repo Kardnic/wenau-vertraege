@@ -209,19 +209,14 @@ tbody tr:hover {
 
 /* Inhalt verborgen */
 .accordion-content {
+  overflow: hidden;
   max-height: 0;
-  overflow: hidden; /* WICHTIG: verstecken! */
   opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.4s ease;
+  transition: max-height 0.35s ease, opacity 0.35s ease;
 }
 
-
-/* Inhalt sichtbar */
 .accordion-content.open {
-  max-height: 9999px;
-  overflow: visible; /* WICHTIG: nicht abschneiden */
   opacity: 1;
-  margin-top: 15px;
 }
 
 
