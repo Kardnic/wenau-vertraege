@@ -10,7 +10,7 @@ const saisonSelect = document.getElementById("saison");
 // Saison-Optionen generieren (z.B. 2024/2025 bis 2030/2031)
 function generateSaisonOptions(selectElement) {
   const currentYear = new Date().getFullYear();
-  const start = currentYear - 1;
+  const start = currentYear ;
   const end = currentYear + 5;
 
   for (let y = start; y <= end; y++) {
