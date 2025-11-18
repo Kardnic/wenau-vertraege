@@ -11,12 +11,9 @@
 
   <!-- PDF-LIB -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
+  <!-- ZIP.js (Pflicht für Passwort-geschützte ZIP-Dateien) -->
   <script src="https://gildas-lormeau.github.io/zip.js/demos/lib/zip-full.min.js"></script>
-
-
-
-
-
 
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
@@ -37,15 +34,15 @@
     Jugendsport Wenau – Vertragsverwaltung (Web)
   </header>
 
-  <!-- Saison-Auswahl -->
-  <div class="card" style="margin-bottom: 20px;">
-    <label for="saison">Saison auswählen:</label>
-    <select id="saison"></select>
+  <!-- SAISON FILTER -->
+  <div class="card" style="margin: 20px;">
+    <label>Saison auswählen:</label>
+    <select id="saisonFilter"></select>
   </div>
 
   <div class="container">
     
-    <!-- Linke Seite – Spielerformular -->
+    <!-- FORMULAR -->
     <div class="card">
       <div class="accordion-header" id="formToggle">
         <h2>Spieler hinzufügen / bearbeiten</h2>
@@ -57,6 +54,9 @@
 
           <label>Name:</label>
           <input type="text" id="name" required>
+
+          <label>Saison:</label>
+          <select id="saison"></select>
 
           <label>Fahrtgeld:</label>
           <input type="number" id="fahrtgeld" step="0.01">
@@ -82,7 +82,7 @@
       </div>
     </div>  
 
-    <!-- Rechte Seite – Tabelle -->
+    <!-- TABELLE -->
     <div class="card">
       <h2>Spielerliste</h2>
 
@@ -122,7 +122,7 @@
   <!-- Haupt-App -->
   <script src="app.js"></script>
 
-  <!-- Service Worker -->
+  <!-- SW -->
   <script>
     if ("serviceWorker" in navigator && location.protocol === "https:") {
       navigator.serviceWorker.register("service-worker.js")

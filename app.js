@@ -1,17 +1,22 @@
-// ------- IndexedDB Setup -------
+// -----------------------------------------------------
+//  IndexedDB Setup
+// -----------------------------------------------------
 
 const DB_NAME = "wenauVertraegeDB";
 const DB_VERSION = 1;
 const STORE_NAME = "spieler";
 
-const saisonFilter = document.getElementById("saison");
+const ZIP_PASSWORD = "WenauerJungs1957!"; // festes ZIP Passwort
 
-const ZIP_PASSWORD = "WenauerJungs1957!";   // Festes Passwort
+const saisonFilter = document.getElementById("saisonFilter");
 
+// -----------------------------------------------------
+//  Saison-Optionen generieren
+// -----------------------------------------------------
 
 function generateSaisonOptions(selectElement) {
   const currentYear = new Date().getFullYear();
-  const start = currentYear -1;
+  const start = currentYear - 1;
   const end = currentYear + 5;
 
   for (let y = start; y <= end; y++) {
@@ -23,8 +28,12 @@ function generateSaisonOptions(selectElement) {
   }
 }
 
+generateSaisonOptions(saisonFilter);
+generateSaisonOptions(document.getElementById("saison")); // Formular Auswahl
 
-generateSaisonOptions(document.getElementById("saison")); // Formular-Dropdown
+// -----------------------------------------------------
+//  IndexedDB Grundfunktionen
+// -----------------------------------------------------
 
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -37,7 +46,6 @@ function openDB() {
           keyPath: "id",
           autoIncrement: true,
         });
-        // optionale Indexe, falls irgendwann benötigt
         store.createIndex("name", "name", { unique: false });
       }
     };
@@ -53,7 +61,6 @@ async function getAllPlayers() {
     const tx = db.transaction(STORE_NAME, "readonly");
     const store = tx.objectStore(STORE_NAME);
     const req = store.getAll();
-
     req.onsuccess = () => resolve(req.result || []);
     req.onerror = () => reject(req.error);
   });
@@ -92,7 +99,9 @@ async function deletePlayerFromDB(id) {
   });
 }
 
-// ------- DOM Elemente / Gehaltslogik -------
+// -----------------------------------------------------
+//  DOM Elemente / FormLogic
+// -----------------------------------------------------
 
 const fahrtgeldInput = document.getElementById("fahrtgeld");
 const trainingsInput = document.getElementById("trainingspraemie");
@@ -106,7 +115,10 @@ const formContainer = document.getElementById("formContainer");
 let spielerData = [];
 window.currentEditId = null;
 
-// Gehalt berechnen
+// -----------------------------------------------------
+//  Gehalt berechnen
+// -----------------------------------------------------
+
 function berechneGehalt() {
   const fahrtgeld = parseFloat(fahrtgeldInput.value) || 0;
   const trainings = parseFloat(trainingsInput.value) || 0;
@@ -114,14 +126,11 @@ function berechneGehalt() {
 
   const gehaltMonat = fahrtgeld + 8 * trainings + 4 * spiel;
 
-  // Saison aus dem Formular
   const saison = document.getElementById("saison").value;
-
   let gehaltJahr;
 
-  // Spezialfall Saison 2025/2026
   if (saison === "2025/2026") {
-    gehaltJahr = gehaltMonat * 5;
+    gehaltJahr = gehaltMonat * 5; // Sonderfall
   } else {
     gehaltJahr = gehaltMonat * 10;
   }
@@ -130,31 +139,33 @@ function berechneGehalt() {
   jahrInput.value = gehaltJahr.toFixed(2);
 }
 
-
-
 fahrtgeldInput.addEventListener("input", berechneGehalt);
 trainingsInput.addEventListener("input", berechneGehalt);
 spielInput.addEventListener("input", berechneGehalt);
 
-// Accordion
+// -----------------------------------------------------
+//  Accordion Öffnen / Schließen
+// -----------------------------------------------------
+
 formToggle.addEventListener("click", () => {
   formContainer.classList.toggle("open");
   formToggle.classList.toggle("open");
 });
 
-// ------- Tabelle rendern -------
+// -----------------------------------------------------
+//  Tabelle aktualisieren
+// -----------------------------------------------------
 
 async function ladeSpieler() {
   const allPlayers = await getAllPlayers();
-  const activeSaison = document.getElementById("saison").value;
+  const activeSaison = saisonFilter.value;
 
-  // Spieler nach Saison filtern
   spielerData = allPlayers.filter(p => p.saison === activeSaison);
 
   const tbody = document.getElementById("spielerBody");
   tbody.innerHTML = "";
 
-  if (!spielerData || spielerData.length === 0) {
+  if (spielerData.length === 0) {
     tbody.innerHTML = `
       <tr>
         <td colspan="10" style="text-align:center; padding:20px;">
@@ -168,12 +179,12 @@ async function ladeSpieler() {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${s.name}</td>
-      <td>${Number(s.fahrtgeld || 0).toFixed(2)}</td>
-      <td>${Number(s.trainingspraemie || 0).toFixed(2)}</td>
-      <td>${Number(s.spielpraemie || 0).toFixed(2)}</td>
-      <td>${Number(s.siegpraemie || 0).toFixed(2)}</td>
-      <td>${Number(s.gehalt_monat || 0).toFixed(2)}</td>
-      <td>${Number(s.gehalt_jahr || 0).toFixed(2)}</td>
+      <td>${Number(s.fahrtgeld).toFixed(2)}</td>
+      <td>${Number(s.trainingspraemie).toFixed(2)}</td>
+      <td>${Number(s.spielpraemie).toFixed(2)}</td>
+      <td>${Number(s.siegpraemie).toFixed(2)}</td>
+      <td>${Number(s.gehalt_monat).toFixed(2)}</td>
+      <td>${Number(s.gehalt_jahr).toFixed(2)}</td>
       <td><button class="editBtn" data-id="${s.id}">✏️</button></td>
       <td><button class="deleteBtn" data-id="${s.id}">🗑️</button></td>
       <td><button class="contractBtn" data-id="${s.id}">📄</button></td>
@@ -181,105 +192,96 @@ async function ladeSpieler() {
     tbody.appendChild(tr);
   });
 
-  // DELETE
-  document.querySelectorAll(".deleteBtn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
-      const id = Number(btn.getAttribute("data-id"));
-      await deletePlayerFromDB(id);
-      document.getElementById("status").innerText = "✅ Spieler gelöscht";
-      ladeSpieler();
-    });
-  });
-
-  // EDIT
+  // Bearbeiten
   document.querySelectorAll(".editBtn").forEach((btn) => {
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.dataset.id);
+      const s = spielerData.find(p => p.id === id);
+
+      window.currentEditId = id;
+
       formContainer.classList.add("open");
       formToggle.classList.add("open");
 
-      const id = Number(btn.getAttribute("data-id"));
-      const spieler = spielerData.find((p) => p.id === id);
-      if (!spieler) return;
-
-      document.getElementById("name").value = spieler.name;
-      document.getElementById("fahrtgeld").value = spieler.fahrtgeld;
-      document.getElementById("trainingspraemie").value = spieler.trainingspraemie;
-      document.getElementById("spielpraemie").value = spieler.spielpraemie;
-      document.getElementById("siegpraemie").value = spieler.siegpraemie;
-      document.getElementById("saison").value = spieler.saison;
+      document.getElementById("name").value = s.name;
+      document.getElementById("saison").value = s.saison;
+      document.getElementById("fahrtgeld").value = s.fahrtgeld;
+      document.getElementById("trainingspraemie").value = s.trainingspraemie;
+      document.getElementById("spielpraemie").value = s.spielpraemie;
+      document.getElementById("siegpraemie").value = s.siegpraemie;
 
       berechneGehalt();
 
-      window.currentEditId = id;
       document.getElementById("status").innerText = "Bearbeite Spieler...";
     });
   });
 
-  // CONTRACT
+  // Löschen
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.dataset.id);
+      await deletePlayerFromDB(id);
+      ladeSpieler();
+    });
+  });
+
+  // Vertrag PDF
   document.querySelectorAll(".contractBtn").forEach((btn) => {
     btn.addEventListener("click", () => {
-      const id = Number(btn.getAttribute("data-id"));
-      const s = spielerData.find((p) => p.id === id);
-      if (!s) return;
+      const id = Number(btn.dataset.id);
+      const s = spielerData.find(p => p.id === id);
       generatePlayerPDF(s);
     });
   });
 }
 
+saisonFilter.addEventListener("change", ladeSpieler);
 
+// -----------------------------------------------------
+//  Speichern
+// -----------------------------------------------------
 
-// ------- Speichern Formular -------
+document.getElementById("spielerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-document
-  .getElementById("spielerForm")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
+  const data = {
+    id: window.currentEditId || undefined,
+    name: document.getElementById("name").value,
+    saison: document.getElementById("saison").value,
+    fahrtgeld: parseFloat(fahrtgeldInput.value) || 0,
+    trainingspraemie: parseFloat(trainingsInput.value) || 0,
+    spielpraemie: parseFloat(spielInput.value) || 0,
+    siegpraemie: parseFloat(document.getElementById("siegpraemie").value) || 0,
+    gehalt_monat: parseFloat(monatInput.value) || 0,
+    gehalt_jahr: parseFloat(jahrInput.value) || 0,
+  };
 
-    const data = {
-      id: window.currentEditId || undefined,
-      name: document.getElementById("name").value,
-      saison: document.getElementById("saison").value,
-      fahrtgeld: parseFloat(fahrtgeldInput.value) || 0,
-      trainingspraemie: parseFloat(trainingsInput.value) || 0,
-      spielpraemie: parseFloat(spielInput.value) || 0,
-      siegpraemie: parseFloat(
-        document.getElementById("siegpraemie").value
-      ) || 0,
-      gehalt_monat: parseFloat(monatInput.value) || 0,
-      gehalt_jahr: parseFloat(jahrInput.value) || 0,
-    };
+  if (!data.name.trim()) {
+    document.getElementById("status").innerText = "❌ Bitte einen Namen eingeben";
+    return;
+  }
 
-    if (!data.name.trim()) {
-      document.getElementById("status").innerText =
-        "❌ Bitte einen Namen eingeben";
-      return;
-    }
+  if (data.id) {
+    await updatePlayerInDB(data);
+  } else {
+    delete data.id;
+    await addPlayerToDB(data);
+  }
 
-    if (data.id) {
-      await updatePlayerInDB(data);
-      document.getElementById("status").innerText =
-        "✅ Spieler wurde aktualisiert";
-    } else {
-      delete data.id; // wichtig, damit IndexedDB neue ID vergibt
-      await addPlayerToDB(data);
-      document.getElementById("status").innerText =
-        "✅ Spieler erfolgreich gespeichert";
-    }
+  formContainer.classList.remove("open");
+  formToggle.classList.remove("open");
 
-    // Formular schließen
-    formContainer.classList.remove("open");
-    formToggle.classList.remove("open");
+  document.getElementById("spielerForm").reset();
+  monatInput.value = "";
+  jahrInput.value = "";
+  window.currentEditId = null;
 
-    // Formular reset
-    document.getElementById("spielerForm").reset();
-    monatInput.value = "";
-    jahrInput.value = "";
-    window.currentEditId = null;
+  ladeSpieler();
+});
 
-    ladeSpieler();
-  });
-
-/// ------- Excel Export -------
+// -----------------------------------------------------
+// ZIP Export mit Passwort
+// -----------------------------------------------------
 
 document.getElementById("exportBtn").addEventListener("click", async () => {
   const data = await getAllPlayers();
@@ -288,20 +290,26 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
     return;
   }
 
-  // Excel erstellen
+  // Excel in Speicher erzeugen
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Spieler");
 
   const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
 
-  // ZIP erstellen
-  const writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
-    password: ZIP_PASSWORD,      // <- Passwort
-    encryptionStrength: 1       // <- 1 = ZipCrypto (Windows kompatibel)
-  });
+  // ZIPWriter
+  const writer = new zip.ZipWriter(
+    new zip.BlobWriter("application/zip"),
+    {
+      password: ZIP_PASSWORD,
+      encryptionStrength: 1 // ZipCrypto
+    }
+  );
 
-  await writer.add("Spielerverwaltung.xlsx", new zip.BlobReader(new Blob([excelBuffer])));
+  await writer.add(
+    "Spielerverwaltung.xlsx",
+    new zip.BlobReader(new Blob([excelBuffer]))
+  );
 
   const zipBlob = await writer.close();
 
@@ -310,12 +318,11 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
   link.href = URL.createObjectURL(zipBlob);
   link.download = "Spielerverwaltung_geschuetzt.zip";
   link.click();
-
-  document.getElementById("status").innerText = "📁 Geschützte ZIP exportiert!";
 });
 
-
-// ------- Excel Import -------
+// -----------------------------------------------------
+//  Excel Import (ohne ZIP)
+// -----------------------------------------------------
 
 document.getElementById("importFile").addEventListener("change", async (event) => {
   const file = event.target.files[0];
@@ -327,29 +334,28 @@ document.getElementById("importFile").addEventListener("change", async (event) =
     const data = new Uint8Array(e.target.result);
 
     const workbook = XLSX.read(data, { type: "array" });
-
     const sheetName = workbook.SheetNames[0];
     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // Alte DB löschen
+    // Alles löschen
     const db = await openDB();
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).clear();
 
-    // Neue Spieler speichern
+    // Daten importieren
     for (const r of rows) {
-      delete r.id; // neue ID vergeben
+      delete r.id;
       await addPlayerToDB(r);
     }
 
-    document.getElementById("status").innerText = "📄 Excel erfolgreich importiert!";
     ladeSpieler();
   };
 
   reader.readAsArrayBuffer(file);
 });
 
-
-// ------- Start -------
+// -----------------------------------------------------
+//  Start
+// -----------------------------------------------------
 
 ladeSpieler();
