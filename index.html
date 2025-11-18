@@ -9,7 +9,7 @@
   <!-- Excel Bibliothek -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <!-- PDF-LIB (global verfügbar als window.PDFLib) -->
+  <!-- PDF-LIB -->
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
   <!-- Styles -->
@@ -30,11 +30,12 @@
   <header>
     Jugendsport Wenau – Vertragsverwaltung (Web)
   </header>
-  <div class="card" style="margin-bottom: 20px;">
-  <label>Saison auswählen:</label>
-  <select id="saisonFilter"></select>
-</div>
 
+  <!-- Saison-Auswahl -->
+  <div class="card" style="margin-bottom: 20px;">
+    <label for="saisonFilter">Saison auswählen:</label>
+    <select id="saisonFilter"></select>
+  </div>
 
   <div class="container">
     
@@ -47,6 +48,10 @@
 
       <div id="formContainer" class="accordion-content">
         <form id="spielerForm">
+
+          <label for="saison">Saison:</label>
+          <select id="saison"></select>
+
           <label>Name:</label>
           <input type="text" id="name" required>
 
@@ -108,13 +113,13 @@
     </div>
   </div>
 
-  <!-- PDF Generator MUSS VOR app.js geladen werden -->
+  <!-- PDF Generator -->
   <script src="pdf.js"></script>
 
   <!-- Haupt-App -->
   <script src="app.js"></script>
 
-  <!-- Service Worker Registrierung (nur unter HTTPS aktiv) -->
+  <!-- Service Worker -->
   <script>
     if ("serviceWorker" in navigator && location.protocol === "https:") {
       navigator.serviceWorker.register("service-worker.js")
@@ -125,5 +130,3 @@
 
 </body>
 </html>
-
-
