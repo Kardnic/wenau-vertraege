@@ -324,6 +324,7 @@ document.getElementById("exportBtn").addEventListener("click", async () => {
 //  Excel Import (ohne ZIP)
 // -----------------------------------------------------
 
+// ------- Excel Import -------
 document.getElementById("importFile").addEventListener("change", async (event) => {
   const file = event.target.files[0];
   if (!file) return;
@@ -334,25 +335,46 @@ document.getElementById("importFile").addEventListener("change", async (event) =
     const data = new Uint8Array(e.target.result);
 
     const workbook = XLSX.read(data, { type: "array" });
+
     const sheetName = workbook.SheetNames[0];
     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // Alles löschen
+    // Fallback-Saison
+    const defaultSaison = "2025/2026";
+
+    // Prüfen: Hat die Excel eine Saison-Spalte?
+    const excelHatSaison = rows.length > 0 && Object.keys(rows[0]).includes("saison");
+
+    // Falls keine Saison-Spalte existiert → hinzufügen
+    rows.forEach(r => {
+      if (!excelHatSaison) {
+        r.saison = defaultSaison;
+      } else {
+        // Saison-Spalte existiert, aber Feld leer
+        if (!r.saison || String(r.saison).trim() === "") {
+          r.saison = defaultSaison;
+        }
+      }
+    });
+
+    // Alte DB löschen
     const db = await openDB();
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).clear();
 
-    // Daten importieren
+    // Neue Spieler speichern
     for (const r of rows) {
-      delete r.id;
+      delete r.id; // neue ID vergeben
       await addPlayerToDB(r);
     }
 
+    document.getElementById("status").innerText = "📄 Excel erfolgreich importiert!";
     ladeSpieler();
   };
 
   reader.readAsArrayBuffer(file);
 });
+
 
 // -----------------------------------------------------
 //  Start
