@@ -115,6 +115,86 @@ const formContainer = document.getElementById("formContainer");
 let spielerData = [];
 window.currentEditId = null;
 
+let sortColumn = null;
+let sortDirection = 1; // 1 = aufsteigend, -1 = absteigend
+
+function sortTable(key) {
+  // Richtung umkehren, falls gleiche Spalte erneut angeklickt wurde
+  if (sortColumn === key) {
+    sortDirection *=  -1;
+  } else {
+    sortColumn = key;
+    sortDirection = 1;
+  }
+
+  spielerData.sort((a, b) => {
+    const valA = a[key];
+    const valB = b[key];
+
+    // Numerisch sortieren, wenn beide Werte Zahlen sind
+    if (!isNaN(valA) && !isNaN(valB)) {
+      return (parseFloat(valA) - parseFloat(valB)) * sortDirection;
+    }
+
+    // Sonst alphabetisch
+    return valA.toString().localeCompare(valB.toString()) * sortDirection;
+  });
+
+  renderSortedTable();
+}
+
+function renderSortedTable() {
+  const tbody = document.getElementById("spielerBody");
+  tbody.innerHTML = "";
+
+  spielerData.forEach((s) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${s.name}</td>
+      <td>${Number(s.fahrtgeld || 0).toFixed(2)}</td>
+      <td>${Number(s.trainingspraemie || 0).toFixed(2)}</td>
+      <td>${Number(s.spielpraemie || 0).toFixed(2)}</td>
+      <td>${Number(s.siegpraemie || 0).toFixed(2)}</td>
+      <td>${Number(s.gehalt_monat || 0).toFixed(2)}</td>
+      <td>${Number(s.gehalt_jahr || 0).toFixed(2)}</td>
+      <td><button class="editBtn" data-id="${s.id}">✏️</button></td>
+      <td><button class="deleteBtn" data-id="${s.id}">🗑️</button></td>
+      <td><button class="contractBtn" data-id="${s.id}">📄</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Buttons neu verbinden
+  addListenersToButtons();
+}
+
+function addListenersToButtons() {
+  document.querySelectorAll(".deleteBtn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-id"));
+      await deletePlayerFromDB(id);
+      ladeSpieler();
+    });
+  });
+
+  document.querySelectorAll(".editBtn").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const id = Number(btn.getAttribute("data-id"));
+      const spieler = spielerData.find((p) => p.id === id);
+      // ... dein Edit-Code
+    });
+  });
+
+  document.querySelectorAll(".contractBtn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = Number(btn.getAttribute("data-id"));
+      const s = spielerData.find((p) => p.id === id);
+      generatePlayerPDF(s);
+    });
+  });
+}
+
+
 // -----------------------------------------------------
 //  Gehalt berechnen
 // -----------------------------------------------------
@@ -381,3 +461,10 @@ document.getElementById("importFile").addEventListener("change", async (event) =
 // -----------------------------------------------------
 
 ladeSpieler();
+// Sortier-Events einmalig setzen
+document.querySelectorAll("th.sortable").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.getAttribute("data-key");
+    sortTable(key);
+  });
+});
