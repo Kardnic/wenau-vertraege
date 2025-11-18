@@ -4,7 +4,8 @@
 async function generatePlayerPDF(s) {
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
 
-  const FESTE_SAISON = "Saison 2026/2027";
+  const FESTE_SAISON = `Saison ${s.saison}`;
+
 
   // A4-Seite: 595 x 842 (ca.)
   const pdfDoc = await PDFDocument.create();
