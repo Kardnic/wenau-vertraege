@@ -11,7 +11,7 @@ const ZIP_PASSWORD = "WenauerJungs1957!";   // Festes Passwort
 
 function generateSaisonOptions(selectElement) {
   const currentYear = new Date().getFullYear();
-  const start = currentYear - 1;
+  const start = currentYear -1;
   const end = currentYear + 5;
 
   for (let y = start; y <= end; y++) {
@@ -283,56 +283,35 @@ document
 
 document.getElementById("exportBtn").addEventListener("click", async () => {
   const data = await getAllPlayers();
-
   if (!data.length) {
     alert("Keine Spieler vorhanden!");
     return;
   }
 
-  // XLSX erzeugen
+  // Excel erstellen
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Spieler");
 
-  const xlsxBinary = XLSX.write(wb, {
-    bookType: "xlsx",
-    type: "binary"
+  const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+
+  // ZIP erstellen
+  const writer = new zip.ZipWriter(new zip.BlobWriter("application/zip"), {
+    password: "wenau2024",      // <- Passwort
+    encryptionStrength: 1       // <- 1 = ZipCrypto (Windows kompatibel)
   });
 
-  function s2ab(s) {
-    const buf = new ArrayBuffer(s.length);
-    const view = new Uint8Array(buf);
-    for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-    return buf;
-  }
+  await writer.add("Spielerverwaltung.xlsx", new zip.BlobReader(new Blob([excelBuffer])));
 
-  const xlsxArray = s2ab(xlsxBinary);
+  const zipBlob = await writer.close();
 
-  // ZIP erzeugen
-  const zip = new JSZip();
-  zip.file("Spielerverwaltung.xlsx", xlsxArray);
+  // Download
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(zipBlob);
+  link.download = "Spielerverwaltung_geschuetzt.zip";
+  link.click();
 
-  zip.generateAsync({ type: "blob" }).then((zipBlob) => {
-
-    // AES verschlüsseln (Binary → WordArray)
-    const reader = new FileReader();
-    reader.onload = function () {
-      const wordArray = CryptoJS.lib.WordArray.create(reader.result);
-      const encrypted = CryptoJS.AES.encrypt(wordArray, ZIP_PASSWORD).toString();
-
-      const encryptedBlob = new Blob([encrypted], { type: "text/plain" });
-
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(encryptedBlob);
-      a.download = "Spielerverwaltung_geschuetzt.zip";  // <<< OHNE .enc
-      a.click();
-    };
-
-    reader.readAsArrayBuffer(zipBlob);
-  });
-
-  document.getElementById("status").innerText =
-    "🔐 ZIP erfolgreich exportiert und passwortgeschützt!";
+  document.getElementById("status").innerText = "📁 Geschützte ZIP exportiert!";
 });
 
 
