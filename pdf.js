@@ -139,7 +139,11 @@ async function generatePlayerPDF(s) {
 
   moveDown(0.8, 12);
   drawParagraph(
-    `wird vereinbart, dass er in der ${FESTE_SAISON} als aktiver Spieler des Jugendsport Wenau e.V. der 1. Mannschaft tätig sein wird.`,
+    `wird vereinbart, dass er in der `,{size: 10,
+      bold: false,
+      lineHeight: 12,});
+  drawParagraph(s.saison, { size: 10, bold: true, lineHeight: 12 });
+  drawParagraph(` als aktiver Spieler des Jugendsport Wenau e.V. der 1. Mannschaft tätig sein wird.`,
     {
       size: 10,
       bold: false,
