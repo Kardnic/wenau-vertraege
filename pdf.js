@@ -259,7 +259,7 @@ async function generatePlayerPDF(s) {
     lineHeight: 14,
   });
   drawParagraph(
-    "Sollte es zu einer Kündigung durch den Spieler (Abmeldung vor dem 31.05.2027) kommen, wird eine Entschädigungszahlung an den Verein in Höhe der dreifachen Monats-Pauschale fällig.",
+    "Sollte es zu einer Kündigung durch den Spieler (Abmeldung vor dem 31.05.2026) kommen, wird eine Entschädigungszahlung an den Verein in Höhe der dreifachen Monats-Pauschale fällig.",
     { size: 10, lineHeight: 12 }
   );
   drawParagraph(
