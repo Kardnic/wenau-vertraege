@@ -254,6 +254,8 @@ async function generatePlayerPDF(s) {
     borderWidth: 1,
     borderColor: rgb(0, 0, 0),
   });
+  zusatzField.setFont(font);
+  zusatzField.setFontSize(10 * SCALE);
 
   y -= fieldHeight + 10;
 
