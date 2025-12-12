@@ -243,7 +243,7 @@ async function generatePlayerPDF(s) {
   // -----------------------------
   drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
 
-  const fieldHeight = 70 * SCALE;
+  const fieldHeight = 20 * SCALE;
   const zusatzField = form.createTextField("zusatzbedingungen");
   zusatzField.enableMultiline();
   //zusatzField.setFontSize(10 * SCALE);
