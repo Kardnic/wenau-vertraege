@@ -247,7 +247,7 @@ async function generatePlayerPDF(s) {
   const zusatzField = form.createTextField("zusatzbedingungen");
   zusatzField.enableMultiline();
   zusatzField.setFontSize(10 * SCALE);
-  zusatzField.setText(""); 
+  zusatzField.setText("Test"); 
   zusatzField.addToPage(page, {
     x: marginLeft,
     y: y - fieldHeight,
