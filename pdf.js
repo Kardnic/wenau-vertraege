@@ -14,6 +14,8 @@ async function generatePlayerPDF(s) {
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const form = pdfDoc.getForm();
+
 
   const marginLeft = 50;
   const marginRight = 50;
@@ -272,6 +274,34 @@ async function generatePlayerPDF(s) {
   );
   moveDown(0.8, 12);
 
+  // -----------------------------
+// Zusatzbedingungen (PDF-Formularfeld)
+// -----------------------------
+drawParagraph("Zusatzbedingungen", {
+  size: 11,
+  bold: true,
+  lineHeight: 14,
+});
+
+const fieldWidth = pageWidth - marginLeft - marginRight;
+const fieldHeight = 80;
+
+const zusatzField = form.createTextField("zusatzbedingungen");
+zusatzField.setText("");
+zusatzField.enableMultiline();
+
+zusatzField.addToPage(page, {
+  x: marginLeft,
+  y: y - fieldHeight,
+  width: fieldWidth,
+  height: fieldHeight,
+  borderWidth: 1,
+  borderColor: rgb(0, 0, 0),
+});
+
+y -= fieldHeight + 20;
+
+
   drawParagraph("Aussetzung des Spielbetriebs durch eine Anordnung", {
     size: 11,
     bold: true,
@@ -338,7 +368,7 @@ async function generatePlayerPDF(s) {
   a.download = `${s.name}_Vertrag.pdf`;
   a.click();
 
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(url); 
 }
 
 // global verfügbar für app.js
