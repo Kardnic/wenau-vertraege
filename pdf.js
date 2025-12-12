@@ -246,6 +246,7 @@ async function generatePlayerPDF(s) {
   const fieldHeight = 70 * SCALE;
   const zusatzField = form.createTextField("zusatzbedingungen");
   zusatzField.enableMultiline();
+  zusatzField.setFontSize(10 * SCALE);
   zusatzField.addToPage(page, {
     x: marginLeft,
     y: y - fieldHeight,
@@ -254,8 +255,7 @@ async function generatePlayerPDF(s) {
     borderWidth: 1,
     borderColor: rgb(0, 0, 0),
   });
-  zusatzField.setFont(font);
-  zusatzField.setFontSize(10 * SCALE);
+  
 
   y -= fieldHeight + 10;
 
@@ -305,6 +305,8 @@ async function generatePlayerPDF(s) {
     size: 10 * SCALE,
     font,
   });
+
+  form.updateFieldAppearances(font);
 
   // -----------------------------
   // Download
