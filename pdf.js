@@ -254,7 +254,7 @@ async function generatePlayerPDF(s) {
     width: pageWidth - marginLeft - marginRight,
     height: fieldHeight,
     borderWidth: 1,
-    borderColor: rgb(0, 0, 0),
+    
   });
   
 
