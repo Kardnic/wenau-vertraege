@@ -253,8 +253,8 @@ async function generatePlayerPDF(s) {
     y: y - fieldHeight,
     width: pageWidth - marginLeft - marginRight,
     height: fieldHeight,
-    borderWidth: 1,
-    borderColor: rgb(255, 255, 255),
+    borderWidth: 0,
+    borderColor: rgb(0, 0, 0),
   });
   
 
