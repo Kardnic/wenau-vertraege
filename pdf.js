@@ -307,7 +307,7 @@ async function generatePlayerPDF(s) {
     font,
   });
 
-  form.updateFieldAppearances(font);
+  //form.updateFieldAppearances(font);
 
   // -----------------------------
   // Download
