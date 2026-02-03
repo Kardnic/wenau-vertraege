@@ -307,6 +307,84 @@ async function generatePlayerPDF(s) {
     font,
   });
 
+  // -----------------------------
+// Rückseite / Seite 2: Zusatzvereinbarung
+// -----------------------------
+
+// OPTIONAL: wenn du das freie Textfeld "Zusatzbedingungen" nicht mehr willst,
+// dann kannst du den kompletten Zusatzbedingungen-Block (TextField) entfernen.
+
+page = pdfDoc.addPage([595, 842]);
+({ width: pageWidth, height: pageHeight } = page.getSize());
+y = pageHeight - 70;
+
+// Logo optional auch auf Seite 2
+try {
+  const logoBytes = await fetch("assets/logo.png").then((r) => r.arrayBuffer());
+  const logoImg = await pdfDoc.embedPng(logoBytes);
+  const logoWidth = 60;
+  const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+  page.drawImage(logoImg, {
+    x: pageWidth - marginRight - logoWidth,
+    y: pageHeight - 40 - logoHeight,
+    width: logoWidth,
+    height: logoHeight,
+  });
+} catch {}
+
+// Titel
+const t2 = "Zusatzvereinbarung zum Spielervertrag";
+const t2Size = 18;
+const t2w = fontBold.widthOfTextAtSize(t2, t2Size * SCALE);
+drawLineOfText(t2, { x: (pageWidth - t2w) / 2, size: t2Size, bold: true });
+moveDown(2.2, 16);
+
+drawParagraph(
+  `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom 15.12.2025 für die Saison ${s.saison}.`,
+  { size: 10, lineHeight: 12 }
+);
+drawParagraph(
+  "Alle nachfolgenden Regelungen gelten zusätzlich zu den bestehenden Vertragsinhalten.",
+  { size: 10, lineHeight: 12 }
+);
+
+moveDown(1.0, 14);
+
+drawParagraph("§1 Monatliche Prämie", { size: 11, bold: true, lineHeight: 14 });
+drawParagraph("Die monatliche Prämie wird monatlich ab dem 01.08. bis zum 31.05. ausgezahlt.", { size: 10, lineHeight: 12 });
+drawParagraph("Die monatliche Prämie wird nur für Monate gezahlt, in denen der Spieler dem Trainings- und Spielbetrieb zur Verfügung steht.", { size: 10, lineHeight: 12 });
+drawParagraph("Bei längerer Verletzung (ab mehr als 4 zusammenhängenden Wochen Trainings- und Spielausfall) entfällt die monatliche Prämie für den Zeitraum der vollständigen Sportuntauglichkeit.", { size: 10, lineHeight: 12 });
+drawParagraph("Die Auszahlung erfolgt jeweils monatsweise rückwirkend.", { size: 10, lineHeight: 12 });
+
+moveDown(0.7, 14);
+
+drawParagraph("§2 Trainingsprämie", { size: 11, bold: true, lineHeight: 14 });
+drawParagraph("Die Trainingsprämie wird ab dem 01.08. bis zum 31.05. gezahlt.", { size: 10, lineHeight: 12 });
+drawParagraph("Die Auszahlung erfolgt ab der ersten offiziellen Trainingseinheit der neuen Saison.", { size: 10, lineHeight: 12 });
+drawParagraph("Trainingsprämien werden nur für absolvierte Trainingseinheiten gezahlt.", { size: 10, lineHeight: 12 });
+drawParagraph("Absagen oder Nichtteilnahmen führen weiterhin zum Wegfall der jeweiligen Trainingsprämie.", { size: 10, lineHeight: 12 });
+drawParagraph("F-Spiele (Freundschaftsspiele) gelten nicht als Trainingseinheit im Sinne der Trainingsprämie.", { size: 10, lineHeight: 12 });
+
+moveDown(0.7, 14);
+
+drawParagraph("§3 Spielprämie (M-Spielprämie)", { size: 11, bold: true, lineHeight: 14 });
+drawParagraph("Die bisherige Spielprämie wird in M-Spielprämie (Meisterschaftsspiel-Prämie) umbenannt.", { size: 10, lineHeight: 12 });
+drawParagraph("Die Prämie wird ausschließlich für Einsätze in Meisterschaftsspielen gezahlt.", { size: 10, lineHeight: 12 });
+drawParagraph("Freundschaftsspiele (F-Spiele) sind von der Prämienzahlung ausgeschlossen.", { size: 10, lineHeight: 12 });
+drawParagraph("Die Prämie wird ab 1 Minute Einsatzzeit gewährt.", { size: 10, lineHeight: 12 });
+
+moveDown(0.7, 14);
+
+drawParagraph("§4 Siegprämie", { size: 11, bold: true, lineHeight: 14 });
+drawParagraph("Die Siegprämie gilt ausschließlich für Meisterschaftsspiele (M-Spiele).", { size: 10, lineHeight: 12 });
+drawParagraph("Freundschaftsspiele (F-Spiele) sind von der Siegprämie ausgeschlossen.", { size: 10, lineHeight: 12 });
+
+moveDown(0.7, 14);
+
+drawParagraph("§5 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
+drawParagraph("Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die Saison 2025/2026.", { size: 10, lineHeight: 12 });
+drawParagraph("Alle übrigen Regelungen des ursprünglichen Spielervertrags bleiben unberührt.", { size: 10, lineHeight: 12 });
+
   //form.updateFieldAppearances(font);
 
   // -----------------------------
