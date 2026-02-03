@@ -331,11 +331,6 @@ async function generatePlayerPDF(s) {
   drawLineOfText(t2, { x: (pageWidth - t2w) / 2, size: t2Size, bold: true });
   moveDown(2.0, 16);
 
-  // optionaler Kopf (kurz, ohne neue Unterschriften)
-  drawParagraph("zwischen dem Jugendsport Wenau e.V. und", { size: 10, lineHeight: 12 });
-  drawParagraph(s.name, { size: 10, bold: true, lineHeight: 12 });
-  moveDown(0.8, 14);
-
   // Text (inhaltlich aus deiner Zusatzvereinbarung)
   drawParagraph(
     `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom 15.12.2025 für die Saison ${s.saison}.`,
