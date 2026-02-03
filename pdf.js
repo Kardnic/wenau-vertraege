@@ -1,5 +1,6 @@
 // pdf.js
 // Erzeugt den Spielervertrag im Browser (Layout wie im alten Node/PDFKit-Programm)
+// + Rückseite (Seite 2) mit Zusatzvereinbarung (ohne neues Datum/Unterschrift)
 
 async function generatePlayerPDF(s) {
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
@@ -8,13 +9,14 @@ async function generatePlayerPDF(s) {
   // Globale Skalierung
   // -----------------------------
   const SCALE = 0.92; // bei Bedarf: 0.9 / 0.95
-
   const FESTE_SAISON = `Saison ${s.saison}`;
 
   // A4
   const pdfDoc = await PDFDocument.create();
   let page = pdfDoc.addPage([595, 842]);
-  const { width: pageWidth, height: pageHeight } = page.getSize();
+
+  // ✅ WICHTIG: muss "let" sein, weil wir auf Seite 2 neu setzen
+  let { width: pageWidth, height: pageHeight } = page.getSize();
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
@@ -45,7 +47,7 @@ async function generatePlayerPDF(s) {
   ) {
     const f = bold ? fontBold : font;
     const maxWidth = pageWidth - marginLeft - marginRight;
-    const words = txt.split(" ");
+    const words = String(txt || "").split(" ");
     let line = "";
 
     for (const word of words) {
@@ -80,19 +82,28 @@ async function generatePlayerPDF(s) {
   // -----------------------------
   // Logo
   // -----------------------------
-  try {
-    const logoBytes = await fetch("assets/logo.png").then(r => r.arrayBuffer());
-    const logoImg = await pdfDoc.embedPng(logoBytes);
-    const logoWidth = 60;
-    const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+  async function drawLogoTopRight() {
+    try {
+      // Hinweis: In CRA/Vite liegt das i.d.R. unter /assets/logo.png in "public"
+      // Wenn du es in /public/assets/logo.png hast, ist fetch("/assets/logo.png") korrekt.
+      const logoBytes = await fetch("/assets/logo.png").then((r) => r.arrayBuffer());
+      const logoImg = await pdfDoc.embedPng(logoBytes);
 
-    page.drawImage(logoImg, {
-      x: pageWidth - marginRight - logoWidth,
-      y: pageHeight - 40 - logoHeight,
-      width: logoWidth,
-      height: logoHeight,
-    });
-  } catch {}
+      const logoWidth = 60;
+      const logoHeight = (logoImg.height / logoImg.width) * logoWidth;
+
+      page.drawImage(logoImg, {
+        x: pageWidth - marginRight - logoWidth,
+        y: pageHeight - 40 - logoHeight,
+        width: logoWidth,
+        height: logoHeight,
+      });
+    } catch {
+      // Logo optional
+    }
+  }
+
+  await drawLogoTopRight();
 
   // -----------------------------
   // Titel
@@ -100,6 +111,7 @@ async function generatePlayerPDF(s) {
   const title = "Spielervertrag";
   const titleSize = 26;
   const tw = fontBold.widthOfTextAtSize(title, titleSize * SCALE);
+
   drawLineOfText(title, {
     x: (pageWidth - tw) / 2,
     size: titleSize,
@@ -173,7 +185,7 @@ async function generatePlayerPDF(s) {
     });
   }
 
-  [tableLeft, tableLeft + col1Width, tableRight].forEach(x =>
+  [tableLeft, tableLeft + col1Width, tableRight].forEach((x) =>
     page.drawLine({
       start: { x, y: tableTop },
       end: { x, y: tableTop - rows.length * rowHeight },
@@ -234,20 +246,16 @@ async function generatePlayerPDF(s) {
   drawParagraph(
     "Sollte es zu einer Kündigung seitens des Vereins kommen, ist der Verein von sämtlichen ausstehenden Gehaltszahlungen entbunden."
   );
-  drawParagraph(
-    "Diese Vereinbarung ist für die kommende Saison gültig."
-  );
+  drawParagraph("Diese Vereinbarung ist für die kommende Saison gültig.");
 
   // -----------------------------
-  // Zusatzbedingungen – Formularfeld
+  // Zusatzbedingungen – Formularfeld (Frontseite)
   // -----------------------------
   drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
 
   const fieldHeight = 20 * SCALE;
   const zusatzField = form.createTextField("zusatzbedingungen");
   zusatzField.enableMultiline();
-  //zusatzField.setFontSize(10 * SCALE);
-  //zusatzField.setText("Test"); 
   zusatzField.addToPage(page, {
     x: marginLeft,
     y: y - fieldHeight,
@@ -256,12 +264,11 @@ async function generatePlayerPDF(s) {
     borderWidth: 0,
     borderColor: rgb(0, 0, 0),
   });
-  
 
   y -= fieldHeight + 10;
 
   // -----------------------------
-  // Abschluss
+  // Abschluss (Frontseite)
   // -----------------------------
   drawParagraph("Aussetzung des Spielbetriebs durch eine Anordnung", {
     size: 11,
@@ -277,9 +284,10 @@ async function generatePlayerPDF(s) {
   moveDown(3, 14);
 
   // -----------------------------
-  // Unterschriften
+  // Unterschriften (Frontseite)
   // -----------------------------
   const sigWidth = 180;
+
   page.drawLine({
     start: { x: marginLeft, y },
     end: { x: marginLeft + sigWidth, y },
@@ -307,7 +315,124 @@ async function generatePlayerPDF(s) {
     font,
   });
 
-  //form.updateFieldAppearances(font);
+  // =====================================================
+  // Rückseite / Seite 2: Zusatzvereinbarung (OHNE Datum/Signatur)
+  // =====================================================
+  page = pdfDoc.addPage([595, 842]);
+  ({ width: pageWidth, height: pageHeight } = page.getSize());
+  y = pageHeight - 70;
+
+  await drawLogoTopRight();
+
+  // Titel Rückseite
+  const t2 = "Zusatzvereinbarung zum Spielervertrag";
+  const t2Size = 18;
+  const t2w = fontBold.widthOfTextAtSize(t2, t2Size * SCALE);
+  drawLineOfText(t2, { x: (pageWidth - t2w) / 2, size: t2Size, bold: true });
+  moveDown(2.0, 16);
+
+  // optionaler Kopf (kurz, ohne neue Unterschriften)
+  drawParagraph("zwischen dem Jugendsport Wenau e.V. und", { size: 10, lineHeight: 12 });
+  drawParagraph(s.name, { size: 10, bold: true, lineHeight: 12 });
+  moveDown(0.8, 14);
+
+  // Text (inhaltlich aus deiner Zusatzvereinbarung)
+  drawParagraph(
+    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom 15.12.2025 für die Saison ${s.saison}.`,
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph(
+    "Alle nachfolgenden Regelungen gelten zusätzlich zu den bestehenden Vertragsinhalten.",
+    { size: 10, lineHeight: 12 }
+  );
+
+  moveDown(0.9, 14);
+
+  drawParagraph("§1 Monatliche Prämie", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph(
+    "Die monatliche Prämie wird monatlich ab dem 01.08. bis zum 31.05. ausgezahlt.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph(
+    "Die monatliche Prämie wird nur für Monate gezahlt, in denen der Spieler dem Trainings- und Spielbetrieb zur Verfügung steht.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph(
+    "Bei längerer Verletzung (ab mehr als 4 zusammenhängenden Wochen Trainings- und Spielausfall) entfällt die monatliche Prämie für den Zeitraum der vollständigen Sportuntauglichkeit.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph("Die Auszahlung erfolgt jeweils monatsweise rückwirkend.", {
+    size: 10,
+    lineHeight: 12,
+  });
+
+  moveDown(0.7, 14);
+
+  drawParagraph("§2 Trainingsprämie", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph("Die Trainingsprämie wird ab dem 01.08. bis zum 31.05. gezahlt.", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph(
+    "Die Auszahlung erfolgt ab der ersten offiziellen Trainingseinheit der neuen Saison.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph("Trainingsprämien werden nur für absolvierte Trainingseinheiten gezahlt.", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph("Absagen oder Nichtteilnahmen führen weiterhin zum Wegfall der jeweiligen Trainingsprämie.", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph("F-Spiele (Freundschaftsspiele) gelten nicht als Trainingseinheit im Sinne der Trainingsprämie.", {
+    size: 10,
+    lineHeight: 12,
+  });
+
+  moveDown(0.7, 14);
+
+  drawParagraph("§3 Spielprämie (M-Spielprämie)", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph(
+    "Die bisherige Spielprämie wird in M-Spielprämie (Meisterschaftsspiel-Prämie) umbenannt.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph("Die Prämie wird ausschließlich für Einsätze in Meisterschaftsspielen gezahlt.", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph("Freundschaftsspiele (F-Spiele) sind von der Prämienzahlung ausgeschlossen.", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph("Die Prämie wird ab 1 Minute Einsatzzeit gewährt.", {
+    size: 10,
+    lineHeight: 12,
+  });
+
+  moveDown(0.7, 14);
+
+  drawParagraph("§4 Siegprämie", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph("Die Siegprämie gilt ausschließlich für Meisterschaftsspiele (M-Spiele).", {
+    size: 10,
+    lineHeight: 12,
+  });
+  drawParagraph("Freundschaftsspiele (F-Spiele) sind von der Siegprämie ausgeschlossen.", {
+    size: 10,
+    lineHeight: 12,
+  });
+
+  moveDown(0.7, 14);
+
+  drawParagraph("§5 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph(
+    "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die Saison 2025/2026.",
+    { size: 10, lineHeight: 12 }
+  );
+  drawParagraph("Alle übrigen Regelungen des ursprünglichen Spielervertrags bleiben unberührt.", {
+    size: 10,
+    lineHeight: 12,
+  });
 
   // -----------------------------
   // Download
