@@ -249,23 +249,13 @@ async function generatePlayerPDF(s) {
   drawParagraph("Diese Vereinbarung ist für die kommende Saison gültig.");
 
   // -----------------------------
-  // Zusatzbedingungen – Formularfeld (Frontseite)
+  // Zusatzbedingungen (Frontseite)
   // -----------------------------
-  drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
-
-  const fieldHeight = 20 * SCALE;
-  const zusatzField = form.createTextField("zusatzbedingungen");
-  zusatzField.enableMultiline();
-  zusatzField.addToPage(page, {
-    x: marginLeft,
-    y: y - fieldHeight,
-    width: pageWidth - marginLeft - marginRight,
-    height: fieldHeight,
-    borderWidth: 0,
-    borderColor: rgb(0, 0, 0),
-  });
-
-  y -= fieldHeight + 10;
+  if (s.zusatzbedingungen && s.zusatzbedingungen.trim()) {
+    drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
+    drawParagraph(s.zusatzbedingungen, { size: 10, lineHeight: 12 });
+    moveDown(0.8, 12);
+  }
 
   // -----------------------------
   // Abschluss (Frontseite)

@@ -361,6 +361,7 @@ async function ladeSpieler() {
       document.getElementById("trainingspraemie").value = s.trainingspraemie;
       document.getElementById("spielpraemie").value = s.spielpraemie;
       document.getElementById("siegpraemie").value = s.siegpraemie;
+      document.getElementById("zusatzbedingungen").value = s.zusatzbedingungen || "";
 
       berechneGehalt();
 
@@ -406,6 +407,7 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
     siegpraemie: parseFloat(document.getElementById("siegpraemie").value) || 0,
     gehalt_monat: parseFloat(monatInput.value) || 0,
     gehalt_jahr: parseFloat(jahrInput.value) || 0,
+    zusatzbedingungen: document.getElementById("zusatzbedingungen").value.trim(),
   };
 
   if (!data.name.trim()) {
@@ -428,6 +430,7 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
   document.getElementById("spielerForm").reset();
   monatInput.value = "";
   jahrInput.value = "";
+  document.getElementById("zusatzbedingungen").value = "";
   window.currentEditId = null;
 
   ladeSpieler();
