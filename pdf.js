@@ -86,7 +86,7 @@ async function generatePlayerPDF(s) {
     try {
       // Hinweis: In CRA/Vite liegt das i.d.R. unter /assets/logo.png in "public"
       // Wenn du es in /public/assets/logo.png hast, ist fetch("/assets/logo.png") korrekt.
-      const logoBytes = await fetch("/assets/logo.png").then((r) => r.arrayBuffer());
+      const logoBytes = await fetch("assets/logo.png").then((r) => r.arrayBuffer());
       const logoImg = await pdfDoc.embedPng(logoBytes);
 
       const logoWidth = 60;
