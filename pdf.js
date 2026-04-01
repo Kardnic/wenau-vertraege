@@ -86,7 +86,7 @@ async function generatePlayerPDF(s) {
     try {
       // Hinweis: In CRA/Vite liegt das i.d.R. unter /assets/logo.png in "public"
       // Wenn du es in /public/assets/logo.png hast, ist fetch("/assets/logo.png") korrekt.
-      const logoBytes = await fetch("/assets/logo.png").then((r) => r.arrayBuffer());
+      const logoBytes = await fetch("assets/logo.png").then((r) => r.arrayBuffer());
       const logoImg = await pdfDoc.embedPng(logoBytes);
 
       const logoWidth = 60;
@@ -164,12 +164,14 @@ async function generatePlayerPDF(s) {
   const rowHeight = 18 * SCALE;
 
   const rows = [
+    ["Gehalt/Jahr (€)", Number(s.gehalt_jahr || 0).toFixed(2)],
+    ["Gehalt/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
     ["Monatliche Prämie (€)", Number(s.fahrtgeld || 0).toFixed(2)],
     ["Trainingsprämie (€)", Number(s.trainingspraemie || 0).toFixed(2)],
     ["Spielprämie (€)", Number(s.spielpraemie || 0).toFixed(2)],
-    ["Siegprämie pro Spiel (€)", Number(s.siegpraemie || 0).toFixed(2)],
-    ["Gehalt/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
-    ["Gehalt/Jahr (€)", Number(s.gehalt_jahr || 0).toFixed(2)],
+    
+    
+    
   ];
 
   const tableLeft = marginLeft;
@@ -241,7 +243,7 @@ async function generatePlayerPDF(s) {
 
   drawParagraph("Besondere Vereinbarungen", { size: 11, bold: true });
   drawParagraph(
-    "Sollte es zu einer Kündigung durch den Spieler (Abmeldung vor dem 31.05.2026) kommen, wird eine Entschädigungszahlung an den Verein in Höhe der dreifachen Monats-Pauschale fällig."
+    "Sollte es zu einer Kündigung durch den Spieler (Abmeldung vor dem 31.05) kommen, wird eine Entschädigungszahlung an den Verein in Höhe der dreifachen Monats-Pauschale fällig."
   );
   drawParagraph(
     "Sollte es zu einer Kündigung seitens des Vereins kommen, ist der Verein von sämtlichen ausstehenden Gehaltszahlungen entbunden."
@@ -249,23 +251,13 @@ async function generatePlayerPDF(s) {
   drawParagraph("Diese Vereinbarung ist für die kommende Saison gültig.");
 
   // -----------------------------
-  // Zusatzbedingungen – Formularfeld (Frontseite)
+  // Zusatzbedingungen (Frontseite)
   // -----------------------------
-  drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
-
-  const fieldHeight = 20 * SCALE;
-  const zusatzField = form.createTextField("zusatzbedingungen");
-  zusatzField.enableMultiline();
-  zusatzField.addToPage(page, {
-    x: marginLeft,
-    y: y - fieldHeight,
-    width: pageWidth - marginLeft - marginRight,
-    height: fieldHeight,
-    borderWidth: 0,
-    borderColor: rgb(0, 0, 0),
-  });
-
-  y -= fieldHeight + 10;
+  if (s.zusatzbedingungen && s.zusatzbedingungen.trim()) {
+    drawParagraph("Zusatzbedingungen", { size: 11, bold: true });
+    drawParagraph(s.zusatzbedingungen, { size: 10, lineHeight: 12 });
+    moveDown(0.8, 12);
+  }
 
   // -----------------------------
   // Abschluss (Frontseite)
@@ -333,7 +325,7 @@ async function generatePlayerPDF(s) {
 
   // Text (inhaltlich aus deiner Zusatzvereinbarung)
   drawParagraph(
-    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom 15.12.2025 für die Saison ${s.saison}.`,
+    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom ${heute} für die Saison ${s.saison}.`,
     { size: 10, lineHeight: 12 }
   );
   drawParagraph(
@@ -421,7 +413,7 @@ async function generatePlayerPDF(s) {
 
   drawParagraph("§5 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph(
-    "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die Saison 2025/2026.",
+    "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die " + FESTE_SAISON + ".",
     { size: 10, lineHeight: 12 }
   );
   drawParagraph("Alle übrigen Regelungen des ursprünglichen Spielervertrags bleiben unberührt.", {

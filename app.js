@@ -156,7 +156,6 @@ function renderSortedTable() {
       <td>${Number(s.fahrtgeld || 0).toFixed(2)}</td>
       <td>${Number(s.trainingspraemie || 0).toFixed(2)}</td>
       <td>${Number(s.spielpraemie || 0).toFixed(2)}</td>
-      <td>${Number(s.siegpraemie || 0).toFixed(2)}</td>
       <td>${Number(s.gehalt_monat || 0).toFixed(2)}</td>
       <td>${Number(s.gehalt_jahr || 0).toFixed(2)}</td>
       <td><button class="editBtn" data-id="${s.id}">✏️</button></td>
@@ -333,7 +332,6 @@ async function ladeSpieler() {
       <td>${Number(s.fahrtgeld).toFixed(2)}</td>
       <td>${Number(s.trainingspraemie).toFixed(2)}</td>
       <td>${Number(s.spielpraemie).toFixed(2)}</td>
-      <td>${Number(s.siegpraemie).toFixed(2)}</td>
       <td>${Number(s.gehalt_monat).toFixed(2)}</td>
       <td>${Number(s.gehalt_jahr).toFixed(2)}</td>
       <td><button class="editBtn" data-id="${s.id}">✏️</button></td>
@@ -360,7 +358,7 @@ async function ladeSpieler() {
       document.getElementById("fahrtgeld").value = s.fahrtgeld;
       document.getElementById("trainingspraemie").value = s.trainingspraemie;
       document.getElementById("spielpraemie").value = s.spielpraemie;
-      document.getElementById("siegpraemie").value = s.siegpraemie;
+      document.getElementById("zusatzbedingungen").value = s.zusatzbedingungen || "";
 
       berechneGehalt();
 
@@ -403,9 +401,9 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
     fahrtgeld: parseFloat(fahrtgeldInput.value) || 0,
     trainingspraemie: parseFloat(trainingsInput.value) || 0,
     spielpraemie: parseFloat(spielInput.value) || 0,
-    siegpraemie: parseFloat(document.getElementById("siegpraemie").value) || 0,
     gehalt_monat: parseFloat(monatInput.value) || 0,
     gehalt_jahr: parseFloat(jahrInput.value) || 0,
+    zusatzbedingungen: document.getElementById("zusatzbedingungen").value.trim(),
   };
 
   if (!data.name.trim()) {
@@ -428,6 +426,7 @@ document.getElementById("spielerForm").addEventListener("submit", async (e) => {
   document.getElementById("spielerForm").reset();
   monatInput.value = "";
   jahrInput.value = "";
+  document.getElementById("zusatzbedingungen").value = "";
   window.currentEditId = null;
 
   ladeSpieler();

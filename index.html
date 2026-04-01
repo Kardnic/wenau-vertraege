@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Programm Wenau Verträge (Web)</title>
-
+  <link rel="icon" href="./assets/logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Excel Bibliothek -->
@@ -68,14 +68,15 @@
           <label>Spielprämie:</label>
           <input type="number" id="spielpraemie" step="0.01">
 
-          <label>Siegprämie:</label>
-          <input type="number" id="siegpraemie" step="0.01">
 
           <label>Gehalt / Monat:</label>
           <input type="number" id="gehalt_monat" step="0.01" readonly>
 
           <label>Gehalt / Jahr:</label>
           <input type="number" id="gehalt_jahr" step="0.01" readonly>
+
+          <label>Zusatzbedingungen:</label>
+          <textarea id="zusatzbedingungen" rows="4" placeholder="Optionale zusätzliche Bedingungen..."></textarea>
 
           <button type="submit">Speichern</button>
           <p id="status"></p>
@@ -100,7 +101,6 @@
         <th class="sortable" data-key="fahrtgeld">Fahrtgeld <span class="sort-icon"></span></th>
         <th class="sortable" data-key="trainingspraemie">Trainingsprämie <span class="sort-icon"></span></th>
         <th class="sortable" data-key="spielpraemie">Spielprämie <span class="sort-icon"></span></th>
-        <th class="sortable" data-key="siegpraemie">Siegprämie <span class="sort-icon"></span></th>
         <th class="sortable" data-key="gehalt_monat">Monat <span class="sort-icon"></span></th>
         <th class="sortable" data-key="gehalt_jahr">Jahr <span class="sort-icon"></span></th>
 

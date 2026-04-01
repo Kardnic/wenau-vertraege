@@ -18,7 +18,6 @@ export async function exportExcel() {
             p.fahrtgeld,
             p.trainingspraemie,
             p.spielpraemie,
-            p.siegpraemie,
             p.gehalt_monat,
             p.gehalt_jahr
         ]);
