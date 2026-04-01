@@ -24,7 +24,6 @@ export async function importExcel(file) {
             fahrtgeld: parseFloat(r[2]) || 0,
             trainingspraemie: parseFloat(r[3]) || 0,
             spielpraemie: parseFloat(r[4]) || 0,
-            siegpraemie: parseFloat(r[5]) || 0,
             gehalt_monat: parseFloat(r[6]) || 0,
             gehalt_jahr: parseFloat(r[7]) || 0
         });
