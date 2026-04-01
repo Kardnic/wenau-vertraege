@@ -278,9 +278,9 @@ function berechneGehalt() {
   let gehaltJahr;
 
   if (saison === "2025/2026") {
-    gehaltJahr = gehaltMonat * 5; // Sonderfall
+    gehaltJahr = (fahrtgeld + 8 * trainings + 3 * spiel) * 5; // Sonderfall
   } else {
-    gehaltJahr = gehaltMonat * 10;
+    gehaltJahr = (fahrtgeld + 8 * trainings + 3 * spiel) * 10;
   }
 
   monatInput.value = gehaltMonat.toFixed(2);
