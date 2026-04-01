@@ -325,7 +325,7 @@ async function generatePlayerPDF(s) {
 
   // Text (inhaltlich aus deiner Zusatzvereinbarung)
   drawParagraph(
-    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom '+${heute}+' für die Saison ${s.saison}.`,
+    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom ${heute} für die Saison ${s.saison}.`,
     { size: 10, lineHeight: 12 }
   );
   drawParagraph(
