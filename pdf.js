@@ -325,7 +325,7 @@ async function generatePlayerPDF(s) {
 
   // Text (inhaltlich aus deiner Zusatzvereinbarung)
   drawParagraph(
-    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom 15.12.2025 für die Saison ${s.saison}.`,
+    `Diese Zusatzvereinbarung ergänzt den Spielervertrag vom '+${heute}+' für die Saison ${s.saison}.`,
     { size: 10, lineHeight: 12 }
   );
   drawParagraph(
@@ -413,7 +413,7 @@ async function generatePlayerPDF(s) {
 
   drawParagraph("§5 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph(
-    "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die Saison 2025/2026.",
+    "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die " + FESTE_SAISON + ".",
     { size: 10, lineHeight: 12 }
   );
   drawParagraph("Alle übrigen Regelungen des ursprünglichen Spielervertrags bleiben unberührt.", {
