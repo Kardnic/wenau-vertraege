@@ -198,23 +198,30 @@ async function generatePlayerPDF(s) {
 
   let rowY = tableTop - rowHeight + 4 * SCALE;
   rows.forEach(([label, value]) => {
-    page.drawText(label, {
-      x: tableLeft + 4,
-      y: rowY,
-      size: 9 * SCALE,
-      font,
-    });
+  const isBoldRow =
+    label === "Gehalt/Jahr (€)" || label === "Gehalt/Monat (€)";
 
-    const vWidth = fontBold.widthOfTextAtSize(value, 9 * SCALE);
-    page.drawText(value, {
-      x: tableRight - 4 - vWidth,
-      y: rowY,
-      size: 9 * SCALE,
-      font: fontBold,
-    });
-
-    rowY -= rowHeight;
+  // Label links (kann bleiben wie vorher oder auch fett – je nach Wunsch)
+  page.drawText(label, {
+    x: tableLeft + 4,
+    y: rowY,
+    size: 9 * SCALE,
+    font,
   });
+
+  // 👉 Wert rechts – jetzt abhängig fett oder normal
+  const valueFont = isBoldRow ? fontBold : font;
+  const vWidth = valueFont.widthOfTextAtSize(value, 9 * SCALE);
+
+  page.drawText(value, {
+    x: tableRight - 4 - vWidth,
+    y: rowY,
+    size: 9 * SCALE,
+    font: valueFont,
+  });
+
+  rowY -= rowHeight;
+});
 
   y = tableTop - rows.length * rowHeight - 10;
 
