@@ -206,7 +206,7 @@ async function generatePlayerPDF(s) {
     x: tableLeft + 4,
     y: rowY,
     size: 9 * SCALE,
-    font,
+    font: isBoldRow ? fontBold : font,
   });
 
   // 👉 Wert rechts – jetzt abhängig fett oder normal
