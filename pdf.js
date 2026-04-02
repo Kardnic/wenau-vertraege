@@ -198,23 +198,26 @@ async function generatePlayerPDF(s) {
 
   let rowY = tableTop - rowHeight + 4 * SCALE;
   rows.forEach(([label, value]) => {
-    page.drawText(label, {
-      x: tableLeft + 4,
-      y: rowY,
-      size: 9 * SCALE,
-      font,
-    });
+  const isBoldRow =
+    label === "Gehalt/Jahr (€)" || label === "Gehalt/Monat (€)";
 
-    const vWidth = fontBold.widthOfTextAtSize(value, 9 * SCALE);
-    page.drawText(value, {
-      x: tableRight - 4 - vWidth,
-      y: rowY,
-      size: 9 * SCALE,
-      font: fontBold,
-    });
-
-    rowY -= rowHeight;
+  page.drawText(label, {
+    x: tableLeft + 4,
+    y: rowY,
+    size: 9 * SCALE,
+    font: isBoldRow ? fontBold : font,
   });
+
+  const vWidth = fontBold.widthOfTextAtSize(value, 9 * SCALE);
+  page.drawText(value, {
+    x: tableRight - 4 - vWidth,
+    y: rowY,
+    size: 9 * SCALE,
+    font: fontBold,
+  });
+
+  rowY -= rowHeight;
+});
 
   y = tableTop - rows.length * rowHeight - 10;
 
@@ -399,19 +402,7 @@ async function generatePlayerPDF(s) {
 
   moveDown(0.7, 14);
 
-  drawParagraph("§4 Siegprämie", { size: 11, bold: true, lineHeight: 14 });
-  drawParagraph("Die Siegprämie gilt ausschließlich für Meisterschaftsspiele (M-Spiele).", {
-    size: 10,
-    lineHeight: 12,
-  });
-  drawParagraph("Freundschaftsspiele (F-Spiele) sind von der Siegprämie ausgeschlossen.", {
-    size: 10,
-    lineHeight: 12,
-  });
-
-  moveDown(0.7, 14);
-
-  drawParagraph("§5 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
+  drawParagraph("§4 Gültigkeit", { size: 11, bold: true, lineHeight: 14 });
   drawParagraph(
     "Diese Zusatzvereinbarung tritt mit Unterzeichnung in Kraft und gilt für die " + FESTE_SAISON + ".",
     { size: 10, lineHeight: 12 }
