@@ -198,26 +198,23 @@ async function generatePlayerPDF(s) {
 
   let rowY = tableTop - rowHeight + 4 * SCALE;
   rows.forEach(([label, value]) => {
-  const isBoldRow =
-    label === "Gehalt/Jahr (€)" || label === "Gehalt/Monat (€)";
+    page.drawText(label, {
+      x: tableLeft + 4,
+      y: rowY,
+      size: 9 * SCALE,
+      font,
+    });
 
-  page.drawText(label, {
-    x: tableLeft + 4,
-    y: rowY,
-    size: 9 * SCALE,
-    font: isBoldRow ? fontBold : font,
+    const vWidth = fontBold.widthOfTextAtSize(value, 9 * SCALE);
+    page.drawText(value, {
+      x: tableRight - 4 - vWidth,
+      y: rowY,
+      size: 9 * SCALE,
+      font: fontBold,
+    });
+
+    rowY -= rowHeight;
   });
-
-  const vWidth = fontBold.widthOfTextAtSize(value, 9 * SCALE);
-  page.drawText(value, {
-    x: tableRight - 4 - vWidth,
-    y: rowY,
-    size: 9 * SCALE,
-    font: fontBold,
-  });
-
-  rowY -= rowHeight;
-});
 
   y = tableTop - rows.length * rowHeight - 10;
 
