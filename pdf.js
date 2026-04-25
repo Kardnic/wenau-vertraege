@@ -164,8 +164,7 @@ async function generatePlayerPDF(s) {
   const rowHeight = 18 * SCALE;
 
   const rows = [
-    ["Gehalt/Jahr (€)", Number(s.gehalt_jahr || 0).toFixed(2)],
-    ["Gehalt/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
+    ["max. möglich/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
     ["Monatliche Prämie (€)", Number(s.fahrtgeld || 0).toFixed(2)],
     ["Trainingsprämie (€)", Number(s.trainingspraemie || 0).toFixed(2)],
     ["Spielprämie (€)", Number(s.spielpraemie || 0).toFixed(2)],
