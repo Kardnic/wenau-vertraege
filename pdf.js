@@ -42,29 +42,45 @@ async function generatePlayerPDF(s) {
   }
 
   function drawParagraph(
-    txt,
-    { size = 10, bold = false, lineHeight = 14, align = "left" } = {}
-  ) {
-    const f = bold ? fontBold : font;
-    const maxWidth = pageWidth - marginLeft - marginRight;
-    const words = String(txt || "").split(" ");
+  txt,
+  { size = 10, bold = false, lineHeight = 14, align = "left" } = {}
+) {
+  const f = bold ? fontBold : font;
+  const maxWidth = pageWidth - marginLeft - marginRight;
+
+  const paragraphs = String(txt || "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .split("\n");
+
+  paragraphs.forEach((para, pIndex) => {
+    const words = para.split(/\s+/).filter(Boolean);
     let line = "";
 
     for (const word of words) {
       const testLine = line ? line + " " + word : word;
       const testWidth = f.widthOfTextAtSize(testLine, size * SCALE);
+
       if (testWidth > maxWidth) {
-        drawWrappedLine(line, f, size, lineHeight, align, bold);
+        if (line) {
+          drawWrappedLine(line, f, size, lineHeight, align, bold);
+        }
         line = word;
       } else {
         line = testLine;
       }
     }
+
     if (line) {
       drawWrappedLine(line, f, size, lineHeight, align, bold);
     }
-  }
 
+    // manueller Zeilenumbruch im Textfeld
+    if (pIndex < paragraphs.length - 1) {
+      y -= lineHeight * SCALE;
+    }
+  });
+}
   function drawWrappedLine(text, fontUsed, size, lineHeight, align, bold) {
     let x = marginLeft;
     if (align === "center") {
