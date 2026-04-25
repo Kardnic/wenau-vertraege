@@ -82,14 +82,23 @@ async function generatePlayerPDF(s) {
   });
 }
   function drawWrappedLine(text, fontUsed, size, lineHeight, align, bold) {
-    let x = marginLeft;
-    if (align === "center") {
-      const tw = fontUsed.widthOfTextAtSize(text, size * SCALE);
-      x = (pageWidth - tw) / 2;
-    }
-    drawLineOfText(text, { x, size, bold });
-    y -= lineHeight * SCALE;
+  text = String(text || "")
+    .replace(/\r\n/g, " ")
+    .replace(/\r/g, " ")
+    .replace(/\n/g, " ");
+
+  if (!text.trim()) return;
+
+  let x = marginLeft;
+
+  if (align === "center") {
+    const tw = fontUsed.widthOfTextAtSize(text, size * SCALE);
+    x = (pageWidth - tw) / 2;
   }
+
+  drawLineOfText(text, { x, size, bold });
+  y -= lineHeight * SCALE;
+}
 
   function moveDown(lines = 1, lineHeight = 14) {
     y -= lines * lineHeight * SCALE;
