@@ -164,7 +164,7 @@ async function generatePlayerPDF(s) {
   const rowHeight = 18 * SCALE;
 
   const rows = [
-    ["max. möglich/Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
+    ["max. möglich/ Monat (€)", Number(s.gehalt_monat || 0).toFixed(2)],
     ["Monatliche Prämie (€)", Number(s.fahrtgeld || 0).toFixed(2)],
     ["Trainingsprämie (€)", Number(s.trainingspraemie || 0).toFixed(2)],
     ["Spielprämie (€)", Number(s.spielpraemie || 0).toFixed(2)],
@@ -245,7 +245,7 @@ async function generatePlayerPDF(s) {
   );
 
   drawParagraph("Spielprämie", { size: 11, bold: true });
-  drawParagraph("Spielprämien werden ab 1 Minute Spielzeit berechnet.");
+  drawParagraph("Spielprämien werden ab 1 Minute Spielzeit im Meisterschaftsspiel berechnet.");
 
   drawParagraph("Besondere Vereinbarungen", { size: 11, bold: true });
   drawParagraph(
